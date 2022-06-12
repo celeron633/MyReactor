@@ -77,6 +77,7 @@ void testFunc(void)
     }
 }
 
+/*
 int main(int argc, char *argv[])
 {
     Thread th(testFunc);
@@ -86,4 +87,4 @@ int main(int argc, char *argv[])
     th.Join();
     th2.Join();
     return 0;
-}
+} */
