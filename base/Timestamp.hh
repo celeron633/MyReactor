@@ -55,7 +55,8 @@ public:
         return timeStr;
     }
 private:
-   timeval _timeval;
+    // timeval holder
+    timeval _timeval;
 };
 
 }
