@@ -17,7 +17,7 @@ namespace base {
 
 class Thread {
 public:
-    Thread(CallbackFunc func) : _func(func), _tid(0), _started(false)
+    Thread(CallbackFunc func) : _started(false), _tid(0), _func(func)
     {
 
     }

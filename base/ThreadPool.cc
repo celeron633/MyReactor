@@ -24,6 +24,8 @@ bool ThreadPool::AddTask(Task t)
 
     // tell one pending thread to fetch a new task
     _cond.Signal();
+
+    return true;
 }
 
 int ThreadPool::GetThreadCount()
