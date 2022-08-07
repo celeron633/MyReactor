@@ -6,6 +6,8 @@
 #include "Timestamp.hh"
 
 #include <unistd.h>
+#include <sys/epoll.h>
+
 #include <iostream>
 #include <functional>
 

@@ -4,15 +4,21 @@
 using namespace net;
 using namespace base;
 
-bool Poller::HasChannel(Channel *channel)
+Poller::~Poller()
 {
-    auto it = _channelMap.find(channel->GetFd());
+    
+}
+
+bool Poller::HasChannel(Channel *channel)
+{   
+    int fd = channel->GetFd();
+    auto it = _channelMap.find(fd);
 
     if (it != _channelMap.end() && it->second == channel) {
-        LOG_DEBUG("found channel for fd [%d]", channel->GetFd());
+        LOG_DEBUG("found channel for fd [%d]", fd);
         return true;
     } else {
-        LOG_WARN("fd [%d] found no channel!", channel->GetFd());
+        LOG_WARN("fd [%d] found with no channel!", fd);
     }
 
     return false;

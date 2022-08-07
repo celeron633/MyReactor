@@ -14,23 +14,30 @@ namespace net {
 
 class EventLoop;
 
-typedef vector<Channel *> ChannelList;
+// fd -> channel
 typedef map<int, Channel*> ChannelMap;
 
-class Poller {
+class Poller : NonCopyable {
 public:
-    Poller(EventLoop *eventLoop);
+    Poller(EventLoop *eventLoop)
+    {
+        _eventLoop = eventLoop;
+    }
     virtual ~Poller();
 
-    // 子类需要实现这些纯虚函数
+    // derived poller class need to implement such interfaces
     virtual Timestamp Poll(int timeoutMs, ChannelList *activeChannels) = 0;
     virtual void UpdateChannel(Channel *channel) = 0;
     virtual void RemoveChannel(Channel *channel) = 0;
 
-    // Poller是否注册了对应的channel
+    // whether a channel has already registed to the poller
     bool HasChannel(Channel *channel);
-private:
+protected:
+    // fd mapping to channel
     ChannelMap _channelMap;
+
+private:
+    EventLoop *_eventLoop;
 };
 
 }

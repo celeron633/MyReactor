@@ -2,8 +2,6 @@
 #include "Log.hh"
 #include "EventLoop.hh"
 
-#include <sys/epoll.h>
-
 using namespace base;
 using namespace net;
 using namespace std;
