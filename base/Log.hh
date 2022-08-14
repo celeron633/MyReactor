@@ -1,5 +1,5 @@
-#ifndef _LOG_HH_
-#define _LOG_HH_
+#ifndef __LOG_HH__
+#define __LOG_HH__
 
 #include "Timestamp.hh"
 

@@ -43,11 +43,13 @@ void EventLoop::loop()
         }
 
         // 2. handle pending functors
+        _mutex.Lock();
         if (!_pendingFunctors.empty()) {
             for (auto &it : _pendingFunctors) {
                 it();
             }
         }
+        _mutex.Unlock();
 
         // 3. handle cron(timer) job
         // TODO: servCron
@@ -62,6 +64,27 @@ void EventLoop::stop()
     _quit = true;
 }
 
+// run callback in eventloop
+void EventLoop::RunInLoop(Functor func)
+{
+    pid_t currentTid = CurrentThread::GetThreadId();
+    
+    // caller just in this loop thread
+    if (currentTid == _tid) {
+        func();
+    } else {
+        QueueInLoop(func);
+    }
+}
+
+void EventLoop::QueueInLoop(Functor func)
+{
+    _mutex.Lock();
+    _pendingFunctors.emplace_back(func);
+    _mutex.Unlock();
+}
+
+// unit test
 int main(int argc, char *argv[])
 {
     EventLoop loop;

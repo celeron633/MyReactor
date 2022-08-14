@@ -1,5 +1,5 @@
-#ifndef __THREAD_HH_
-#define __THREAD_HH_
+#ifndef __THREAD_HH__
+#define __THREAD_HH__
 
 #include "Log.hh"
 

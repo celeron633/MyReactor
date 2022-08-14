@@ -17,6 +17,7 @@ string INetAddr::GetAddr()
 {
     char buf[32] = {0};
     inet_ntop(AF_INET, &_sAddr.sin_addr, buf, sizeof(buf));
+    
     return string(buf);
 }
 

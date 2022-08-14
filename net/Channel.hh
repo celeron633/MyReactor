@@ -11,13 +11,13 @@
 #include <iostream>
 #include <functional>
 
-
 using base::Timestamp;
 using base::NonCopyable;
 using std::function;
 
 namespace net {
 
+// class declaration
 class EventLoop;
 
 // one socket fd regist to one eventloop

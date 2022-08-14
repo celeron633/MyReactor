@@ -1,5 +1,5 @@
-#ifndef __TIME_STAMP_HH_
-#define __TIME_STAMP_HH_
+#ifndef __TIMESTAMP_HH__
+#define __TIMESTAMP_HH__
 
 #include <unistd.h>
 #include <sys/time.h>

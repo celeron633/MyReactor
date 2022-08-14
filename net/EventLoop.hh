@@ -1,5 +1,5 @@
-#ifndef __EVENTLOOP_HH__
-#define __EVENTLOOP_HH__
+#ifndef __EVENT_LOOP_HH__
+#define __EVENT_LOOP_HH__
 
 #include "NonCopyable.hh"
 #include "Mutex.hh"
@@ -36,9 +36,9 @@ public:
     // 结束事件循环
     void stop();
     // 在EventLoop中运行
-    void RunInLoop();
+    void RunInLoop(Functor func);
     // 加入待执行回调队列
-    void QueueInLoop();
+    void QueueInLoop(Functor func);
 
 private:
     Poller *_poller;
