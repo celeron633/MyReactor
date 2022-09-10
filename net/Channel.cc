@@ -14,6 +14,10 @@ const int Channel::kNoneEvent = 0;
 Channel::Channel(EventLoop *loop, int fd) : _loop(loop), _fd(fd), _index(-1), _events(0), _rEvents(0)
 {
     LOG_INFO("Channel construct");
+    // 关注读取事件
+    this->EnableRead();
+    // 不关注可写事件
+    this->DisableWrite();
 }
 
 Channel::~Channel()
@@ -60,5 +64,5 @@ void Channel::HandleEvent(Timestamp timestamp)
 
 void Channel::Update()
 {
-    // _loop->UpdateChannel(this);
+    _loop->UpdateChannel(this);
 }

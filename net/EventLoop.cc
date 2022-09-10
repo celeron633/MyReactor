@@ -84,7 +84,13 @@ void EventLoop::QueueInLoop(Functor func)
     _mutex.Unlock();
 }
 
+void EventLoop::UpdateChannel(Channel *channel)
+{
+    this->_poller->UpdateChannel(channel);
+}
+
 // unit test
+/*
 int main(int argc, char *argv[])
 {
     EventLoop loop;
@@ -92,3 +98,4 @@ int main(int argc, char *argv[])
     loop.loop();
     return 0;
 }
+*/

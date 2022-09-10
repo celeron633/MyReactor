@@ -60,7 +60,7 @@ public:
     {
         return _events;
     }
-    int GetRevents()
+    int GetrEvents()
     {
         return _rEvents;
     }
