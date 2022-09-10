@@ -18,13 +18,14 @@ ByteBuffer::~ByteBuffer()
 
 ssize_t ByteBuffer::ReadFd(int fd, int *saveErrno)
 {
+    // 先读取fd到堆栈空间
     char buf[65535] = {0};
 
     ssize_t readRet = read(fd, (void *)buf, sizeof(buf));
     if (readRet <= 0) {
         *saveErrno = errno;
     } else {
-        Append(buf, readRet);
+        Append(buf, readRet);   // 追加到buffer中
     }
 
     return readRet;
@@ -49,6 +50,11 @@ void ByteBuffer::MakeRoom(size_t len)
 {
     size_t newBufSize = (this->_buf.capacity() + len) * 2;
     this->_buf.resize(newBufSize);
+}
+
+void ByteBuffer::Shrink(void)
+{
+    this->_buf.shrink_to_fit();
 }
 
 char* ByteBuffer::Begin()

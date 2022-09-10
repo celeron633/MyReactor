@@ -5,6 +5,7 @@
 
 using namespace net;
 using namespace base;
+using namespace std;
 
 const int kEpollSize = 1024;
 const int kEpollPollTmoMs = 3 * 1000;
@@ -30,7 +31,7 @@ void EPollPoller::FillActiveChannels(ChannelList *channelList)
     for (int i = 0; i < epEventsSize; ++i) {
         // get 'Channel *' pointer from epoll_data
         Channel *channel = (Channel *)_epEvents[i].data.ptr;
-        channel->SetRevents(_epEvents[i].events);
+        channel->SetrEvents(_epEvents[i].events);
 
         channelList->push_back(channel);
     }
@@ -80,7 +81,7 @@ void EPollPoller::UpdateChannel(Channel *channel)
             LOG_ERROR("epoll_ctl EPOLL_CTL_ADD failed");
             perror("epoll_ctl");
         } else {
-            _channelMap.insert(std::pair<int, Channel*>(fd, channel));
+            _channelMap.insert(pair<int, Channel*>(fd, channel));
         }
     }
 

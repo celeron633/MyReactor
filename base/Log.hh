@@ -22,7 +22,7 @@ namespace base {
 
 class Logger {
 public:
-    static Logger * GetInstance() {
+    static Logger* GetInstance() {
         static Logger logger;
         return &logger;
     }

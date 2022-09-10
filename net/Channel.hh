@@ -66,7 +66,7 @@ public:
     }
 
     // epoll_wait返回后调用
-    void SetRevents(int events)
+    void SetrEvents(int events)
     {
         this->_rEvents = events;
     }

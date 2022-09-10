@@ -19,18 +19,21 @@ public:
     size_t WritableBytes();
     size_t InternalBufferCapacity();
 
-    ssize_t ReadFd(int fd, int *saveErrno);
+    ssize_t ReadFd(int fd, int* saveErrno);
 
     void MakeRoom(size_t len);
-    void Append(char *ptr, size_t len);
+    void Append(char* ptr, size_t len);
     void Retrieve(size_t len);
+    void Shrink(void);
 
+    // pointer to data
     char* Begin();
     char* ReadBegin();
     char* WriteBegin();
 private:
     vector<char> _buf;
 
+    // read & write index
     size_t _readIndex;
     size_t _writeIndex;
 };

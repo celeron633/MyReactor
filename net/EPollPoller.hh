@@ -16,6 +16,7 @@ public:
     EPollPoller(EventLoop *loop);
     ~EPollPoller();
 public:
+    // 实现父类的接口
     virtual Timestamp Poll(int timeoutMs, ChannelList *activeChannels);
     virtual void UpdateChannel(Channel *channel);
     virtual void RemoveChannel(Channel *channel);

@@ -22,7 +22,7 @@ public:
 
 private:
     pthread_cond_t _cond;
-    Mutex *_mutex;
+    Mutex* _mutex;
 };
 
 }
