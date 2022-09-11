@@ -28,6 +28,12 @@ void Logger::SetFilterLevel(int level)
     _filterLevel = level;
 }
 
+void Logger::Crash()
+{
+    int* addr = 0x0;
+    *addr = 0;
+}
+
 void Logger::Append(string str)
 {
     // level filter

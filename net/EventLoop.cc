@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "EventLoop.hh"
 #include "Poller.hh"
 #include "EPollPoller.hh"
@@ -7,6 +9,8 @@
 using namespace std;
 using namespace base;
 using namespace net;
+
+#define USE_BUILTIN_ASSERT
 
 const int kPollTimeoutMs = 3 * 1000;
 
@@ -89,13 +93,23 @@ void EventLoop::UpdateChannel(Channel *channel)
     this->_poller->UpdateChannel(channel);
 }
 
-// unit test
-/*
+void EventLoop::AssertInEventLoop(void)
+{
+#ifdef USE_BUILTIN_ASSERT
+    assert(CurrentThread::GetThreadId() == this->_tid);
+#else
+    if (CurrentThread::GetThreadId() != this->_tid) {
+        LOG_FATAL("AssertInEventLoop!");
+    }
+#endif
+}
+
+
 int main(int argc, char *argv[])
 {
     EventLoop loop;
     printf("tid: [%ld]\n", syscall(SYS_gettid));
+    loop.AssertInEventLoop();
     loop.loop();
     return 0;
 }
-*/

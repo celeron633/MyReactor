@@ -32,6 +32,7 @@ public:
     void SetLogLevel(int logLevel);
     int GetLogLevel();
     void SetFilterLevel(int level);
+    void Crash();   // raise a SIGSEGV crash
 private:
     Logger();
     ~Logger();
@@ -52,7 +53,7 @@ do {                                                \
     base::Logger *logger = Logger::GetInstance();   \
     logger->SetLogLevel(TraceLevels::DEBUG);        \
     logger->Append(buf, __FUNCTION__, __LINE__);    \
-} while (0);                                        \
+} while (0)
 
 #define LOG_INFO(fmt, ...)                          \
 do {                                                \
@@ -61,7 +62,7 @@ do {                                                \
     base::Logger *logger = Logger::GetInstance();   \
     logger->SetLogLevel(TraceLevels::INFO);         \
     logger->Append(buf, __FUNCTION__, __LINE__);    \
-} while (0);                                        \
+} while (0)
 
 #define LOG_TRACE(fmt, ...)                         \
 do {                                                \
@@ -70,7 +71,7 @@ do {                                                \
     base::Logger *logger = Logger::GetInstance();   \
     logger->SetLogLevel(TraceLevels::TRACE);        \
     logger->Append(buf, __FUNCTION__, __LINE__);    \
-} while (0);                                        \
+} while (0)
 
 #define LOG_WARN(fmt, ...)                          \
 do {                                                \
@@ -79,7 +80,7 @@ do {                                                \
     base::Logger *logger = Logger::GetInstance();   \
     logger->SetLogLevel(TraceLevels::WARN);         \
     logger->Append(buf, __FUNCTION__, __LINE__);    \
-} while (0);                                        \
+} while (0)
 
 #define LOG_ERROR(fmt, ...)                         \
 do {                                                \
@@ -88,7 +89,7 @@ do {                                                \
     base::Logger *logger = Logger::GetInstance();   \
     logger->SetLogLevel(TraceLevels::ERROR);        \
     logger->Append(buf, __FUNCTION__, __LINE__);    \
-} while (0);                                        \
+} while (0)
 
 #define LOG_FATAL(fmt, ...)                         \
 do {                                                \
@@ -97,6 +98,7 @@ do {                                                \
     base::Logger *logger = Logger::GetInstance();   \
     logger->SetLogLevel(TraceLevels::FATAL);        \
     logger->Append(buf, __FUNCTION__, __LINE__);    \
-} while (0);                                        \
+    logger->Crash();                                \
+} while (0)
 
 #endif

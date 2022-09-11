@@ -40,6 +40,8 @@ public:
     // 加入待执行回调队列
     void QueueInLoop(Functor func);
 
+    void AssertInEventLoop(void);
+
 private:
     Poller *_poller;
     vector<Functor> _pendingFunctors;

@@ -37,6 +37,11 @@ sockaddr_in * INetAddr::GetSockAddr()
     return &_sAddr;
 }
 
+void INetAddr::SetSockAddr(sockaddr& addr)
+{
+    this->_sAddr = *(sockaddr_in*)&addr;
+}
+
 uint16_t INetAddr::GetPort()
 {
     return ntohs(_sAddr.sin_port);

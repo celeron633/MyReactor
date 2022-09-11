@@ -7,6 +7,7 @@
 #include "INetAddr.hh"
 #include "Channel.hh"
 #include "EventLoop.hh"
+#include "Socket.hh"
 
 #include <vector>
 #include <functional>
@@ -16,6 +17,7 @@
 
 using std::enable_shared_from_this;
 using std::shared_ptr;
+using std::unique_ptr;
 using std::string;
 using std::function;
 using std::bind;
@@ -31,10 +33,10 @@ namespace net {
 class TcpConnection : public enable_shared_from_this<TcpConnection>, public NonCopyable {
     using TcpConnectionPtr = shared_ptr<TcpConnection>;
 
-    using TcpConnectionCallback = function<void (TcpConnectionPtr &)>;
-    using MessageReadCallback = function<void (TcpConnectionPtr &)>;
-    using MessageWriteCompleteCallback = function<void (TcpConnectionPtr &)>;
-    using TcpConnectionCloseCallback = function<void (TcpConnectionPtr &)>;
+    using TcpConnectionCallback = function<void (TcpConnectionPtr)>;
+    using MessageReadCallback = function<void (TcpConnectionPtr, Timestamp, ByteBuffer*)>;
+    using MessageWriteCompleteCallback = function<void (TcpConnectionPtr)>;
+    using TcpConnectionCloseCallback = function<void (TcpConnectionPtr)>;
 
 public:
     enum TcpConnState {
@@ -44,9 +46,35 @@ public:
         kDisconnecting
     };
 public:
-    TcpConnection(EventLoop *eventLoop, string name, int sockFd, const INetAddr &peerAddr, const INetAddr &localAddr);
+    //  peerAddr && localAddr: tcp four tuple
+    TcpConnection(EventLoop* eventLoop, string name, int sockFd, const INetAddr& peerAddr, const INetAddr& localAddr);
     ~TcpConnection();
 
+    int GetConnStatus()
+    {
+        return _status;
+    }
+
+    string GetConnName()
+    {
+        return _connName;
+    }
+
+    EventLoop* GetLoop(void)
+    {
+        return _eventLoop;
+    }
+
+    // 关闭socket写
+    void ShutdownWrite()
+    {
+        this->_channel->DisableWrite();
+        if (::shutdown(this->_sockFd, SHUT_WR) < 0) {
+            perror("socket shutdown");
+        }
+    }
+
+    ssize_t Write(const char* buf, size_t len);
 
 private:
     void HandleRead(Timestamp readTime);
@@ -56,8 +84,8 @@ private:
 
 private:
     // one connection has one channel, one loop has one or more channel(connection)
-    EventLoop *_eventLoop;
-    Channel *_channel;
+    EventLoop* _eventLoop;
+    unique_ptr<net::Channel> _channel;  // use smart pointer for channel
 
     // tcp connection fd
     const int _sockFd;
@@ -68,6 +96,9 @@ private:
     // peer and local address info
     const INetAddr _peerAddr;
     const INetAddr _localAddr;
+
+    // local and peer Socket object
+    Socket _peerSocket;
 
     // connection status
     atomic_int _status;

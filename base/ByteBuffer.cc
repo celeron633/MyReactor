@@ -16,7 +16,7 @@ ByteBuffer::~ByteBuffer()
 
 }
 
-ssize_t ByteBuffer::ReadFd(int fd, int *saveErrno)
+ssize_t ByteBuffer::ReadFd(int fd, int* saveErrno)
 {
     // 先读取fd到堆栈空间
     char buf[65535] = {0};
