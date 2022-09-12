@@ -23,7 +23,7 @@ public:
 
     ~Socket()
     {
-
+        Close();
     }
 
     SOCKET fd()
@@ -33,6 +33,7 @@ public:
 
     int Listen();
     int Accept(INetAddr& peerAddr);
+    int Close();
 
     void SetNoDelay();      // TCP no-delay
     void SetReusePort();    // TCP reuse-port

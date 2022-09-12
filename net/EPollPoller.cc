@@ -112,4 +112,5 @@ void EPollPoller::RemoveChannel(Channel *channel)
             _channelMap.erase(it);
         }
     }
+    return;
 }

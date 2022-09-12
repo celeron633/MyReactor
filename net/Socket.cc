@@ -36,6 +36,16 @@ int Socket::Accept(INetAddr& peerAddr)
     return fd;
 }
 
+int Socket::Close()
+{
+    int ret = 0;
+    ret = close(this->_sockFd);
+    if (ret < 0) {
+        perror("close");
+        LOG_ERROR("close socket fd[%d] failed!", this->_sockFd);
+    }
+    return ret;
+}
 
 // namespace sockets
 SOCKET Socket::CreateNonBlockingSocket()

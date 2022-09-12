@@ -115,7 +115,8 @@ public:
         this->_events = kNoneEvent;
         Update();
     }
-
+public:
+    void Remove();
 private:
     void Update();
 
@@ -129,7 +130,7 @@ private:
 
     // 注册到epoll红黑树上去时的fd对应的感兴趣的事件
     int _events;
-    // epoll返回的事件
+    // epoll返回的事件  epoll_wait
     int _rEvents;
 
     // callbacks for channel read/write

@@ -34,7 +34,7 @@ class TcpConnection : public enable_shared_from_this<TcpConnection>, public NonC
     using TcpConnectionPtr = shared_ptr<TcpConnection>;
 
     using TcpConnectionCallback = function<void (TcpConnectionPtr)>;
-    using MessageReadCallback = function<void (TcpConnectionPtr, Timestamp, ByteBuffer*)>;
+    using MessageReadCallback = function<void (TcpConnectionPtr, ByteBuffer*, Timestamp)>;
     using MessageWriteCompleteCallback = function<void (TcpConnectionPtr)>;
     using TcpConnectionCloseCallback = function<void (TcpConnectionPtr)>;
 
@@ -74,8 +74,15 @@ public:
         }
     }
 
+    // write data to tcp connection
     ssize_t Write(const char* buf, size_t len);
+    // force close the connection
+    void ForceClose();
+    void ForceCloseInLoop();
 
+private:
+    void SetState(TcpConnState);
+    const char* State2String();
 private:
     void HandleRead(Timestamp readTime);
     void HandleWrite();

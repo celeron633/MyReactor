@@ -30,7 +30,8 @@ public:
     EventLoop();
     ~EventLoop();
 
-    void UpdateChannel(Channel *channel);
+    void UpdateChannel(Channel* channel);
+    void RemoveChannel(Channel* ch);
     // 开始事件循环
     void loop();
     // 结束事件循环

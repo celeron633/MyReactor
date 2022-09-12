@@ -66,3 +66,8 @@ void Channel::Update()
 {
     _loop->UpdateChannel(this);
 }
+
+void Channel::Remove()
+{
+    _loop->RemoveChannel(this);
+}
