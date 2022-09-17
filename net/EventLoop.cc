@@ -113,12 +113,3 @@ bool EventLoop::InEventLoopThread(void)
 {
     return CurrentThread::GetThreadId() == this->_tid;
 }
-
-int main(int argc, char *argv[])
-{
-    EventLoop loop;
-    printf("tid: [%ld]\n", syscall(SYS_gettid));
-    loop.AssertInEventLoop();
-    loop.loop();
-    return 0;
-}

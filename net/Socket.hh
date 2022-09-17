@@ -5,7 +5,11 @@
 #include "NonCopyable.hh"
 #include "INetAddr.hh"
 
-typedef int SOCKET;
+#ifdef __linux__ 
+    typedef int SOCKET;
+#else
+    typedef int SOCKET;
+#endif
 
 namespace net {
 // non-copyable
@@ -31,6 +35,7 @@ public:
         return _sockFd;
     }
 
+    int Bind(INetAddr& listenAddr);
     int Listen();
     int Accept(INetAddr& peerAddr);
     int Close();

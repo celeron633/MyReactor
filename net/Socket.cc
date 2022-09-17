@@ -12,6 +12,19 @@ using namespace net;
 #endif
 
 // namespace net class Socket
+int Socket::Bind(INetAddr& listenAddr)
+{
+    sockaddr_in inAddr = *(listenAddr.GetSockAddr());
+    socklen_t sockLen = sizeof(inAddr);
+
+    if (bind(this->_sockFd, (sockaddr*)&inAddr, sockLen) < 0) {
+        perror("bind");
+        LOG_FATAL("Bind failed");
+    }
+
+    return 0;
+}
+
 int Socket::Listen()
 {
     if (listen(this->_sockFd, BACKLOG_SIZE) < 0) {

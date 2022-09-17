@@ -30,3 +30,4 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/bin)
 # sub directories
 add_subdirectory(base)
 add_subdirectory(net)
+add_subdirectory(test)
