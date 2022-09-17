@@ -72,7 +72,7 @@ char* ByteBuffer::WriteBegin()
     return &(*_buf.begin()) + _writeIndex;
 }
 
-void ByteBuffer::Append(char *ptr, size_t len)
+void ByteBuffer::Append(const char *ptr, size_t len)
 {
     size_t writable = WritableBytes();
     if(len > writable) {

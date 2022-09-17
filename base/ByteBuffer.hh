@@ -22,7 +22,7 @@ public:
     ssize_t ReadFd(int fd, int* saveErrno);
 
     void MakeRoom(size_t len);
-    void Append(char* ptr, size_t len);
+    void Append(const char* ptr, size_t len);
     void Retrieve(size_t len);
     void Shrink(void);
 

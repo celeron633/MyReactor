@@ -34,7 +34,13 @@ public:
     // EventLoop中loop返回后处理事件
     void HandleEvent(Timestamp timestamp);
 
-    // index
+    // 是否关注了可写事件
+    bool IsWriting()
+    {
+        return _isWriting;
+    }
+
+    // channel index
     void SetIndex(int idx)
     {
         this->_index = idx;
@@ -104,11 +110,13 @@ public:
     {
         this->_events |= kWriteEvent;
         Update();
+        _isWriting = true;
     }
     void DisableWrite()
     {
         this->_events &= ~kWriteEvent;
         Update();
+        _isWriting = false;
     }
     void DisableAll()
     {
@@ -143,6 +151,9 @@ private:
     static const int kReadEvent;
     static const int kWriteEvent;
     static const int kNoneEvent;
+
+    // 是否注册了对写事件的关注
+    bool _isWriting;
 };
 
 }

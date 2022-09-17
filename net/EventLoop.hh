@@ -42,6 +42,7 @@ public:
     void QueueInLoop(Functor func);
 
     void AssertInEventLoop(void);
+    bool InEventLoopThread(void);
 
 private:
     Poller *_poller;

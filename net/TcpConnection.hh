@@ -60,7 +60,7 @@ public:
         return _connName;
     }
 
-    EventLoop* GetLoop(void)
+    EventLoop* GetEventLoop(void)
     {
         return _eventLoop;
     }
@@ -76,10 +76,17 @@ public:
 
     // write data to tcp connection
     ssize_t Write(const char* buf, size_t len);
+    ssize_t Write(const string& str);
+    ssize_t WriteInLoop(const char* buf, size_t len);
     // force close the connection
     void ForceClose();
     void ForceCloseInLoop();
 
+    // for 'TcpServer' & 'TcpClient'
+    void ConnectionEstablished();
+    void ConnectionEstablishedInLoop();
+    void ConnectionDestory();
+    void ConnectionDestoryInLoop();
 private:
     void SetState(TcpConnState);
     const char* State2String();
@@ -104,7 +111,7 @@ private:
     const INetAddr _peerAddr;
     const INetAddr _localAddr;
 
-    // local and peer Socket object
+    // peer Socket object
     Socket _peerSocket;
 
     // connection status

@@ -15,7 +15,7 @@ set(CMAKE_CXX_FLAGS
 # multi thread support
 find_package(Threads REQUIRED)
 
-# 'gcc -I'
+# 'gcc -I' include directories
 include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/base ${PROJECT_SOURCE_DIR}/net)
 
 # binary output path

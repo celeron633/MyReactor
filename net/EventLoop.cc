@@ -109,6 +109,10 @@ void EventLoop::AssertInEventLoop(void)
 #endif
 }
 
+bool EventLoop::InEventLoopThread(void)
+{
+    return CurrentThread::GetThreadId() == this->_tid;
+}
 
 int main(int argc, char *argv[])
 {

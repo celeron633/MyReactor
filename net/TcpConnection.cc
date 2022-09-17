@@ -20,7 +20,7 @@ TcpConnection::TcpConnection(EventLoop* eventLoop, string name, int sockFd, cons
 
 TcpConnection::~TcpConnection()
 {
-    LOG_INFO("TcpConnection object: [%s] destructed!", _connName.c_str());
+    LOG_INFO("TcpConnection : [%s] destructed!", _connName.c_str());
 }
 
 // handler for event 'READ'
@@ -53,11 +53,12 @@ void TcpConnection::HandleRead(Timestamp readTime)
 void TcpConnection::HandleClose()
 {
     if (_status == kDisconnected) {
+        LOG_WARN("call HandleClose while status is kDisconnected!");
         return;
     }
 
     // make sure this happens in EventLoop thread
-    this->GetLoop()->AssertInEventLoop();
+    _eventLoop->AssertInEventLoop();
     LOG_INFO("conn: [%s], status: [%s], fd: [%d]", _connName.c_str(), State2String(), _sockFd);
 
     LOG_INFO("conn: [%s] HandleRead close begin", _connName.c_str());
@@ -77,7 +78,51 @@ void TcpConnection::HandleClose()
     LOG_INFO("conn: [%s] HandleRead close end", this->_connName.c_str());
 }
 
-// for user call
+ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
+{
+    // make sure this happens in loop thread, not in working thread
+    _eventLoop->AssertInEventLoop();
+
+    LOG_DEBUG("WriteInLoop begin!");
+    // if the channel is not interested in 'Writable', just send to client/server with ::write
+    if (!_channel->IsWriting()) {
+        ssize_t writeLen = ::write(this->_sockFd, buf, len);
+        size_t remainingLen = len - writeLen;
+
+        if (writeLen == (ssize_t)len) {
+            LOG_DEBUG("call ::write() with full-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
+            return writeLen;
+        } else if (writeLen < (ssize_t)len) {
+            LOG_DEBUG("call ::write() with part-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
+            // 余下部分加入buffer, 关注写事件再发送
+            this->_writeBuf.Append(buf + writeLen, remainingLen);
+            // 关注写事件
+            this->_channel->EnableWrite();
+            return writeLen;
+        } else if (writeLen < 0 && (errno != EAGAIN || errno != EWOULDBLOCK)) {
+            perror("call ::write() failed");
+            LOG_ERROR("WriteInLoop failed!");
+            // TODO: call errorCallBack
+            return -1;
+        }
+    } else {
+        LOG_DEBUG("channel IsWriting() returns true, still some data in writeBuffer, will append!");
+        this->_writeBuf.Append(buf, len);
+        return 0;
+    }
+    LOG_DEBUG("WriteInLoop end!");
+    return 0;
+}
+
+void TcpConnection::HandleWrite()
+{
+    LOG_INFO("HandleWrite begin");
+    this->_eventLoop->AssertInEventLoop();
+
+    LOG_INFO("HandleWrite End");
+}
+
+// for upper layer call
 void TcpConnection::ForceClose()
 {
     SetState(kDisconnecting);
@@ -107,6 +152,71 @@ void TcpConnection::ForceCloseInLoop()
     if (this->_status == kDisconnecting || this->_status == kConnected) {
         HandleClose();
     }
+}
+
+// for upper layer call
+void TcpConnection::ConnectionEstablished()
+{
+    _eventLoop->QueueInLoop(bind(&TcpConnection::ConnectionEstablishedInLoop, this));
+}
+
+void TcpConnection::ConnectionEstablishedInLoop()
+{
+    LOG_DEBUG("ConnectionEstablishedInLoop begin");
+    // make sure all things happened in LoopThread
+    this->_eventLoop->AssertInEventLoop();
+
+    // only do following step when state is kConnecting
+    if (_status != kConnecting) {
+        LOG_WARN("call ConnectionEstablishedInLoop while state is not kConnecting!");
+        return;
+    }
+
+    // regist channel with read event
+    this->_channel->EnableRead();
+
+    // set status as 'connected'
+    SetState(kConnected);
+
+    // run callback
+    if (this->_connectionOKCallback) {
+        _connectionOKCallback(shared_from_this());
+    }
+
+    LOG_DEBUG("ConnectionEstablishedInLoop end! TcpConnection object state is [%s]", State2String());
+}
+
+void TcpConnection::ConnectionDestory()
+{
+    _eventLoop->RunInLoop(bind(&TcpConnection::ConnectionDestoryInLoop, this));
+}
+
+void TcpConnection::ConnectionDestoryInLoop()
+{
+    this->_eventLoop->AssertInEventLoop();
+
+    LOG_DEBUG("ConnectionDestoryInLoop begin!");
+
+    if (this->_status != kConnected || this->_status != kDisconnecting) {
+        LOG_WARN("call ConnectionDestoryInLoop while status is not kConnected or kDisconnecting");
+        return;
+    }
+
+    this->SetState(kDisconnecting);
+
+    this->_channel->DisableAll();
+    this->_channel->Remove();
+
+    this->SetState(kDisconnected);
+
+    // run callback
+    if (this->_connectionCloseCallback) {
+        TcpConnectionPtr guard(shared_from_this());
+        _connectionCloseCallback(guard);
+    }
+
+    LOG_DEBUG("ConnectionDestoryInLoop end! TcpConnection object state is [%s]", State2String());
+    return;
 }
 
 void TcpConnection::SetState(TcpConnState status)
