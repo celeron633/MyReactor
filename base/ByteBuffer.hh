@@ -9,6 +9,7 @@ using std::vector;
 namespace base {
 
 const int kInitialBufferSize = 4096;
+const int kMaximumBufferBytes = 20 * 1024 * 1024;
 
 class ByteBuffer {
 public:
@@ -24,6 +25,7 @@ public:
     void MakeRoom(size_t len);
     void Append(const char* ptr, size_t len);
     void Retrieve(size_t len);
+    void RetrieveAll(void);
     void Shrink(void);
 
     // pointer to data

@@ -35,9 +35,9 @@ public:
     void HandleEvent(Timestamp timestamp);
 
     // 是否关注了可写事件
-    bool IsWriting()
+    bool IsWriteEnabled()
     {
-        return _isWriting;
+        return _isWriteEnabled;
     }
 
     // channel index
@@ -110,13 +110,13 @@ public:
     {
         this->_events |= kWriteEvent;
         Update();
-        _isWriting = true;
+        _isWriteEnabled = true;
     }
     void DisableWrite()
     {
         this->_events &= ~kWriteEvent;
         Update();
-        _isWriting = false;
+        _isWriteEnabled = false;
     }
     void DisableAll()
     {
@@ -153,7 +153,7 @@ private:
     static const int kNoneEvent;
 
     // 是否注册了对写事件的关注
-    bool _isWriting;
+    bool _isWriteEnabled;
 };
 
 }

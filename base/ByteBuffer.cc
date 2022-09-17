@@ -4,11 +4,13 @@
 #include <sys/types.h>
 #include <errno.h>
 
+#include <strings.h>    // this is a GNU header, not a std c header
+
 using namespace base;
 
 ByteBuffer::ByteBuffer() :_buf(kInitialBufferSize), _readIndex(0), _writeIndex(0)
 {
-    
+
 }
 
 ByteBuffer::~ByteBuffer()
@@ -20,6 +22,7 @@ ssize_t ByteBuffer::ReadFd(int fd, int* saveErrno)
 {
     // 先读取fd到堆栈空间
     char buf[65535] = {0};
+    bzero((void*)buf, sizeof(buf));
 
     ssize_t readRet = read(fd, (void *)buf, sizeof(buf));
     if (readRet <= 0) {
@@ -96,6 +99,15 @@ void ByteBuffer::Retrieve(size_t len)
     if (_readIndex == _writeIndex) {
         _readIndex = 0;
         _writeIndex = 0;
+
+        // 重置游标时当大于最大buffer大小, 重新置为初始大小
+        if (this->_buf.size() > kMaximumBufferBytes) {
+            this->_buf.resize(kInitialBufferSize);
+        }
     }
 }
 
+void ByteBuffer::RetrieveAll(void)
+{
+    Retrieve(ReadableBytes());
+}

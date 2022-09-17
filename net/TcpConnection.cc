@@ -85,7 +85,7 @@ ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
 
     LOG_DEBUG("WriteInLoop begin!");
     // if the channel is not interested in 'Writable', just send to client/server with ::write
-    if (!_channel->IsWriting()) {
+    if (!_channel->IsWriteEnabled()) {
         ssize_t writeLen = ::write(this->_sockFd, buf, len);
         size_t remainingLen = len - writeLen;
 
@@ -106,7 +106,7 @@ ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
             return -1;
         }
     } else {
-        LOG_DEBUG("channel IsWriting() returns true, still some data in writeBuffer, will append!");
+        LOG_DEBUG("channel IsWriteEnabled() returns true, still some data in writeBuffer, will append to writeBuffer!");
         this->_writeBuf.Append(buf, len);
         return 0;
     }
@@ -117,9 +117,44 @@ ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
 void TcpConnection::HandleWrite()
 {
     LOG_INFO("HandleWrite begin");
+    // make sure in loop thread
     this->_eventLoop->AssertInEventLoop();
 
+    if (!_channel->IsWriteEnabled()) {
+        LOG_WARN("call HandleWrite while channel is not writeEnabled!");
+        return;
+    }
+
+    // 写缓存已经写完了
+    if (this->_writeBuf.ReadableBytes() == 0) {
+        LOG_DEBUG("writeBuf is empty! channel will DisableWrite!");
+        this->_channel->DisableWrite();
+        return;
+    }
+
+    // 写缓存还余下多少
+    size_t bufRemainingSize = _writeBuf.ReadableBytes();
+    const char* bufAddr = _writeBuf.ReadBegin();
+    
+    // 调用写socket
+    ssize_t actualWriteSize = ::write(this->_sockFd, bufAddr, bufRemainingSize);
+    if (actualWriteSize < 0 && (errno != EAGAIN || errno != EWOULDBLOCK)) { // write失败
+        perror("call ::write() failed");
+        LOG_ERROR("HandleWrite write failed!");
+        return;
+    }
+
+    if (actualWriteSize == (ssize_t)bufRemainingSize) {  // 写缓存全部发送完了
+        this->_writeBuf.RetrieveAll();
+        LOG_DEBUG("::write send all writeBuf data! will DisableWrite!");
+        this->_channel->DisableWrite(); // 全部发送完了不再关注写事件
+    } else if (actualWriteSize < (ssize_t)bufRemainingSize) {    // 写缓存发送出去了部分
+        LOG_DEBUG("::write send [%ld] bytes from writeBuf", actualWriteSize);
+        this->_writeBuf.Retrieve(actualWriteSize);
+    }
     LOG_INFO("HandleWrite End");
+
+    return;
 }
 
 // for upper layer call

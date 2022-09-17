@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.0)
 project(MyReactor)
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    message("building with Linux!")
+else()
+    message( FATAL_ERROR "Only support Linux!" )
+endif()
+
 # CXX 11
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
