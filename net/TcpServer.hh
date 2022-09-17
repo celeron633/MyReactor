@@ -14,6 +14,8 @@
 
 using std::string;
 
+typedef std::map<string, net::TcpConnectionPtr> ConnectionMap;
+
 namespace net {
 
 class TcpServer : public base::NonCopyable {
@@ -52,6 +54,7 @@ private:
     void HandleNewConnection(int sockFd, INetAddr clientAddr);
 
 private:
+    EventLoop* _eventLoop;
     string _serverName;
     INetAddr _listenAddr;
 
@@ -69,6 +72,9 @@ private:
 
     // Acceptror
     Acceptor _acceptor;
+
+    // connections
+    ConnectionMap _connectionMap;
 };
 
 }

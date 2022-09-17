@@ -44,6 +44,7 @@ public:
     void SetReusePort();    // TCP reuse-port
     void SetReuseAddr();    // TCP reuse-addr
 
+    // public static functions
     static SOCKET CreateNonBlockingSocket();
     static void SetSocketNonBlocking(SOCKET fd);
 private:

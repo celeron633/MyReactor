@@ -87,6 +87,24 @@ public:
     void ConnectionEstablishedInLoop();
     void ConnectionDestory();
     void ConnectionDestoryInLoop();
+public:
+    void SetTcpConnectionCallback(TcpConnectionCallback cb)
+    {
+        this->_connectionOKCallback = cb;
+    }
+    void SetMessageReadCallback(MessageReadCallback cb)
+    {
+        this->_messageReadCallback = cb;
+    }
+    void SetMessageWriteCompleteCallback(MessageWriteCompleteCallback cb)
+    {
+        this->_messageWriteCompleteCallback = cb;
+    }
+    void SetTcpConnectionCloseCallback(TcpConnectionCloseCallback cb)
+    {
+        this->_connectionCloseCallback = cb;
+    }
+
 private:
     void SetState(TcpConnState);
     const char* State2String();
