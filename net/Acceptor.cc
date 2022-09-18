@@ -32,6 +32,7 @@ void Acceptor::start()
     // bind listen addr
     this->bindAddr(_listenAddr);
     // listen to specificed sockaddr
+    this->_listenSocket.ReuseAddr();
     listen();
     // regist to epoll for reading event
     this->_channel.EnableRead();

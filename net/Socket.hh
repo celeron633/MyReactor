@@ -37,6 +37,7 @@ public:
 
     int Bind(INetAddr& listenAddr);
     int Listen();
+    void ReuseAddr();
     int Accept(INetAddr& peerAddr);
     int Close();
 
@@ -47,6 +48,7 @@ public:
     // public static functions
     static SOCKET CreateNonBlockingSocket();
     static void SetSocketNonBlocking(SOCKET fd);
+    static void SetSocketReuseAddr(SOCKET fd, bool on = true);
 private:
     const SOCKET _sockFd;
 };  // end class 'Socket'

@@ -25,6 +25,11 @@ int Socket::Bind(INetAddr& listenAddr)
     return 0;
 }
 
+void Socket::ReuseAddr()
+{
+    Socket::SetSocketReuseAddr(this->_sockFd, true);
+}
+
 int Socket::Listen()
 {
     if (listen(this->_sockFd, BACKLOG_SIZE) < 0) {
@@ -102,4 +107,15 @@ void Socket::SetSocketNonBlocking(SOCKET fd)
         perror("fcntl");
         LOG_FATAL("call fcntl SETFL failed!");
     }
+}
+
+void Socket::SetSocketReuseAddr(SOCKET fd, bool on)
+{
+    int optval = on ? 1 : 0;
+    #ifdef WIN32
+        ::setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char*)&optval, sizeof(optval));
+    #else
+        ::setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &optval, static_cast<socklen_t>(sizeof optval));
+    #endif
+        // FIXME CHECK
 }

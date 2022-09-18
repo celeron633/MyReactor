@@ -14,8 +14,8 @@ void ReadClientData(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp ts)
 
     size_t recvBytes = buf->ReadableBytes();
     LOG_INFO("recv bytes: [%lu]", recvBytes);
-
     printf("%s\n", buf->ReadBegin());
+    buf->RetrieveAll();
 
     LOG_INFO("ReadClientData end");
 }
