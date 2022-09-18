@@ -28,9 +28,16 @@ void TcpServer::stop()
 {
     LOG_WARN("TcpServer::stop() begin");
 
-    // for ()
+    for (auto it = _connectionMap.begin(); it != _connectionMap.end(); ++it) {
+        this->RemoveConnection(it->second);
+    }
 
     LOG_WARN("TcpServer::stop() end");
+}
+
+void TcpServer::DefaultTcpConnectionHandler(const TcpConnectionPtr& con)
+{
+    LOG_INFO("welcom new client: [%s]", con->GetConnName().c_str());
 }
 
 // handle incoming tcp client
@@ -39,15 +46,15 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
     this->_eventLoop->AssertInEventLoop();
     LOG_INFO("HandleNewConnection begin! sockFd: [%d], client info: [%s]", sockFd, clientAddr.GetAddrAndPort().c_str());
 
-    string tcpConnTuple = this->_listenAddr.GetAddrAndPort() + "<->" + clientAddr.GetAddrAndPort();
-    TcpConnectionPtr con(new TcpConnection(_eventLoop, tcpConnTuple, sockFd, clientAddr, _listenAddr));
-    con->SetTcpConnectionCallback(_tcpConnectionCallback);
+    string tcpConnStr = this->_listenAddr.GetAddrAndPort() + "<->" + clientAddr.GetAddrAndPort();
+    TcpConnectionPtr con(new TcpConnection(_eventLoop, tcpConnStr, sockFd, clientAddr, _listenAddr));
+    con->SetTcpConnectionCallback(bind(&TcpServer::DefaultTcpConnectionHandler, this, std::placeholders::_1));
     con->SetTcpConnectionCloseCallback(bind(&TcpServer::RemoveConnection, this, std::placeholders::_1));
     con->SetMessageReadCallback(_messageReadCallback);
     con->SetMessageWriteCompleteCallback(_messageWriteCompleteCallback);
-    _connectionMap[tcpConnTuple] = con;
-    /* this->_connectionMap.insert(std::pair<string, TcpConnectionPtr>(tcpConnTuple, \
-        make_shared<TcpConnection>(TcpConnection(_eventLoop, tcpConnTuple, sockFd, clientAddr, _listenAddr)))); */
+    _connectionMap[tcpConnStr] = con;
+    /* this->_connectionMap.insert(std::pair<string, TcpConnectionPtr>(tcpConnStr, \
+        make_shared<TcpConnection>(TcpConnection(_eventLoop, tcpConnStr, sockFd, clientAddr, _listenAddr)))); */
 
     _eventLoop->RunInLoop(bind(&TcpConnection::ConnectionEstablished, con));
 
@@ -64,6 +71,8 @@ void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
 {
     this->_eventLoop->AssertInEventLoop();  // make sure this happens in loop thread
 
+    LOG_DEBUG("RemoveConnectionInLoop begin! conn: [%s]", con->GetConnName().c_str());
+
     auto iter = _connectionMap.find(con->GetConnName());
     if (iter != _connectionMap.end()) {
         this->_connectionMap.erase(iter);
@@ -72,7 +81,6 @@ void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
         return;
     }
 
-    LOG_DEBUG("RemoveConnectionInLoop begin");
     this->_eventLoop->RunInLoop(bind(&TcpConnection::ConnectionDestory, con));
     LOG_DEBUG("RemoveConnectionInLoop end");
 }

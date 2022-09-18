@@ -55,6 +55,8 @@ private:
     void RemoveConnection(const TcpConnectionPtr& con);   // remove a connection
     void RemoveConnectionInLoop(const TcpConnectionPtr &con); // remove a connection
 
+    void DefaultTcpConnectionHandler(const TcpConnectionPtr& con);
+
 private:
     EventLoop* _eventLoop;  // the eventLoop belonging to
     string _serverName; // the name of this server instance

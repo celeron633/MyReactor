@@ -78,6 +78,12 @@ void TcpConnection::HandleClose()
     LOG_INFO("conn: [%s] HandleRead close end", this->_connName.c_str());
 }
 
+void TcpConnection::HandleError()
+{
+    LOG_WARN("channel called HandleError!");
+    HandleClose();
+}
+
 ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
 {
     // make sure this happens in loop thread, not in working thread
