@@ -9,7 +9,7 @@
 
 namespace net {
 
-class Acceptor {
+class Acceptor : public NonCopyable {
 public:
     Acceptor(EventLoop* loop, INetAddr listenAddr);
     ~Acceptor();

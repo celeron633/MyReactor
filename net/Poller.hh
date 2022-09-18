@@ -17,7 +17,7 @@ class EventLoop;
 // fd -> channel
 typedef map<int, Channel*> ChannelMap;
 
-class Poller : NonCopyable {
+class Poller : public NonCopyable {
 public:
     Poller(EventLoop *eventLoop)
     {

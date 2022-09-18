@@ -26,7 +26,7 @@ typedef function<void (void)> Functor;
 // channel list
 typedef vector<Channel *> ChannelList;
 
-class EventLoop : NonCopyable {
+class EventLoop : public NonCopyable {
 public:
     EventLoop();
     ~EventLoop();

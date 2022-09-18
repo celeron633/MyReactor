@@ -9,7 +9,7 @@ TcpConnection::TcpConnection(EventLoop* eventLoop, string name, int sockFd, cons
     _peerAddr(peerAddr), _localAddr(localAddr), _peerSocket(_sockFd), _status(kConnecting){
     LOG_INFO("TcpConnection object constructed! connName: [%s], peerFd: [%d]", _connName.c_str(), _sockFd);
     
-    // set callbacks for channel
+    // set callbacks for channel for this TcpConnection object
     _channel->SetReadCallback(bind(&TcpConnection::HandleRead, this, std::placeholders::_1));
     _channel->SetWriteCallback(bind(&TcpConnection::HandleWrite, this));
     _channel->SetErrorCallback(bind(&TcpConnection::HandleError, this));

@@ -54,6 +54,7 @@ void EventLoop::loop()
         LOG_INFO("pollRetTime: [%s]", pollRetTime.ConvertToString().c_str());
 
         LOG_DEBUG("activeChannels' count: [%lu]", _activeChannels.size());
+        // 1. handle returned event
         for (ChannelList::iterator it = _activeChannels.begin(); it != _activeChannels.end(); ++it) {
             (*it)->HandleEvent(pollRetTime);
         }

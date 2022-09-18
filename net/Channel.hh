@@ -22,7 +22,7 @@ namespace net {
 class EventLoop;
 
 // one socket fd regist to one eventloop
-class Channel : NonCopyable {
+class Channel : public NonCopyable {
 public:
     Channel(EventLoop* loop, int fd);
     ~Channel();
