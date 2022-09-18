@@ -69,9 +69,9 @@ public:
     }
 
     // write data to tcp connection
-    ssize_t Write(const char* buf, size_t len);
-    ssize_t Write(const string& str);
-    ssize_t WriteInLoop(const char* buf, size_t len);
+    void Write(const char* buf, size_t len);
+    void Write(const string& str);
+    void WriteInLoop(const char* buf, size_t len);
     // force close the connection
     void ForceClose();
     void ForceCloseInLoop();

@@ -12,11 +12,15 @@ void ReadClientData(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp ts)
 {
     LOG_INFO("ReadClientData begin! conn: [%s], time: [%s]", conn->GetConnName().c_str(), ts.ConvertToString().c_str());
 
+    char sendBuf[512] = {0};
+
     size_t recvBytes = buf->ReadableBytes();
     LOG_INFO("recv bytes: [%lu]", recvBytes);
+    memcpy(sendBuf, buf->ReadBegin(), recvBytes);
     printf("%s\n", buf->ReadBegin());
     buf->RetrieveAll();
 
+    conn->Write(sendBuf, recvBytes);
     LOG_INFO("ReadClientData end");
 }
 

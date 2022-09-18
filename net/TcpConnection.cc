@@ -84,7 +84,12 @@ void TcpConnection::HandleError()
     HandleClose();
 }
 
-ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
+void TcpConnection::Write(const char* buf, size_t len)
+{
+    this->_eventLoop->RunInLoop(bind(&TcpConnection::WriteInLoop, this, buf, len));
+}
+
+void TcpConnection::WriteInLoop(const char* buf, size_t len)
 {
     // make sure this happens in loop thread, not in working thread
     _eventLoop->AssertInEventLoop();
@@ -100,27 +105,22 @@ ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
             if (this->_messageWriteCompleteCallback) {
                 _messageWriteCompleteCallback(shared_from_this());
             }
-            return writeLen;
         } else if (writeLen < (ssize_t)len) {
             LOG_DEBUG("call ::write() with part-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
             // 余下部分加入buffer, 关注写事件再发送
             this->_writeBuf.Append(buf + writeLen, remainingLen);
             // 关注写事件
             this->_channel->EnableWrite();
-            return writeLen;
         } else if (writeLen < 0 && (errno != EAGAIN || errno != EWOULDBLOCK)) {
             perror("call ::write() failed");
             LOG_ERROR("WriteInLoop failed!");
             // TODO: call errorCallBack
-            return -1;
         }
     } else {
         LOG_DEBUG("channel IsWriteEnabled() returns true, still some data in writeBuffer, will append to writeBuffer!");
         this->_writeBuf.Append(buf, len);
-        return 0;
     }
     LOG_DEBUG("WriteInLoop end!");
-    return 0;
 }
 
 void TcpConnection::HandleWrite()
