@@ -28,24 +28,24 @@ public:
     void stop();
 
 public:
-    void setTcpConnectionCallback(TcpConnectionCallback& cb)
+    void setTcpConnectionCallback(const TcpConnectionCallback& cb)
     {
         this->_tcpConnectionCallback = cb;
     }
-    void setMessageReadCallback(MessageReadCallback& cb)
+    void setMessageReadCallback(const MessageReadCallback& cb)
     {
         this->_messageReadCallback = cb;
     }
-    void setMessageWriteCompleteCallback(MessageWriteCompleteCallback& cb)
+    void setMessageWriteCompleteCallback(const MessageWriteCompleteCallback& cb)
     {
         this->_messageWriteCompleteCallback = cb;
     }
-    void setTcpConnectionCloseCallback(TcpConnectionCloseCallback& cb)
+    void setTcpConnectionCloseCallback(const TcpConnectionCloseCallback& cb)
     {
         this->_tcpConnectionCloseCallback = cb;
     }
 private:
-    void setNewConnectionCallback(NewConnectionCallback& cb)
+    void setNewConnectionCallback(const NewConnectionCallback& cb)
     {
         this->_newConnectionCallback = cb;
     }
