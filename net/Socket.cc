@@ -65,7 +65,7 @@ int Socket::Close()
     return ret;
 }
 
-// namespace sockets
+// public socket related functions
 SOCKET Socket::CreateNonBlockingSocket()
 {
     int flags = 0;

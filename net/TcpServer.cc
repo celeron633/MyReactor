@@ -5,7 +5,7 @@ using namespace net;
 using namespace std;
 
 TcpServer::TcpServer(EventLoop* loop, INetAddr listenAddr, string serverName) : _eventLoop(loop), _serverName(serverName), _listenAddr(listenAddr), \
-    _acceptor(loop, listenAddr)
+    _acceptor(_eventLoop, _listenAddr)
 {
     LOG_INFO("TcpServer: [%s] constructed!", this->_serverName.c_str());
 }
@@ -62,6 +62,7 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
     return;
 }
 
+// handle connection close
 void TcpServer::RemoveConnection(const TcpConnectionPtr& con)
 {
     this->_eventLoop->RunInLoopThread(bind(&TcpServer::RemoveConnectionInLoop, this, con));

@@ -26,6 +26,7 @@ TcpConnection::~TcpConnection()
 // handler for event 'READ'
 void TcpConnection::HandleRead(Timestamp readTime)
 {
+    // make sure this happens in loop thread
     this->_eventLoop->AssertInEventLoopThread();
 
     LOG_INFO("conn: [%s] HandleRead begin, time: [%s]", this->_connName.c_str(), readTime.ConvertToString().c_str());
@@ -43,6 +44,7 @@ void TcpConnection::HandleRead(Timestamp readTime)
                 _messageReadCallback(shared_from_this(), &this->_readBuf, readTime);
             }
         } else if (bytesRead == 0) {    // peer closed the connection, we do the same
+            LOG_INFO("peer close! we close too!");
             this->HandleClose();
         }
     }
