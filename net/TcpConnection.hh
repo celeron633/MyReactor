@@ -82,19 +82,19 @@ public:
     void ConnectionDestory();
     void ConnectionDestoryInLoop();
 public:
-    void SetTcpConnectionCallback(TcpConnectionCallback cb)
+    void SetTcpConnectionCallback(const TcpConnectionCallback& cb)
     {
         this->_connectionOKCallback = cb;
     }
-    void SetMessageReadCallback(MessageReadCallback cb)
+    void SetMessageReadCallback(const MessageReadCallback& cb)
     {
         this->_messageReadCallback = cb;
     }
-    void SetMessageWriteCompleteCallback(MessageWriteCompleteCallback cb)
+    void SetMessageWriteCompleteCallback(const MessageWriteCompleteCallback& cb)
     {
         this->_messageWriteCompleteCallback = cb;
     }
-    void SetTcpConnectionCloseCallback(TcpConnectionCloseCallback cb)
+    void SetTcpConnectionCloseCallback(const TcpConnectionCloseCallback& cb)
     {
         this->_connectionCloseCallback = cb;
     }

@@ -15,7 +15,7 @@ public:
     ~Acceptor();
 
     void start();
-    void setNewConnectionCallback(NewConnectionCallback cb)
+    void setNewConnectionCallback(const NewConnectionCallback& cb)
     {
         _newConnectionCallback = cb;
     }
