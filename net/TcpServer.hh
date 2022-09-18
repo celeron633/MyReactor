@@ -52,11 +52,13 @@ private:
 
 private:
     void HandleNewConnection(int sockFd, INetAddr clientAddr);
+    void RemoveConnection(const TcpConnectionPtr& con);   // remove a connection
+    void RemoveConnectionInLoop(const TcpConnectionPtr &con); // remove a connection
 
 private:
-    EventLoop* _eventLoop;
-    string _serverName;
-    INetAddr _listenAddr;
+    EventLoop* _eventLoop;  // the eventLoop belonging to
+    string _serverName; // the name of this server instance
+    INetAddr _listenAddr;   // server addr & port to listen
 
     // callbacks for TcpConnection
     TcpConnectionCallback _tcpConnectionCallback;

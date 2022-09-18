@@ -1,20 +1,42 @@
 #ifndef __CALLBACKS_HH__
 #define __CALLBACKS_HH__
 
-#include "TcpConnection.hh"
+#include "Timestamp.hh"
 #include "INetAddr.hh"
+#include "ByteBuffer.hh"
+
+#include <memory>
+#include <functional>
+
+using std::shared_ptr;
+using base::Timestamp;
+using std::function;
+
+using base::ByteBuffer;
+
+namespace base {
+
+    class ByteBuffer;
+    class Timestamp;
+}
 
 namespace net {
 
-// TcpConnection && TcpServer
-using TcpConnectionPtr = shared_ptr<TcpConnection>;
-using TcpConnectionCallback = function<void (TcpConnectionPtr)>;
-using MessageReadCallback = function<void (TcpConnectionPtr, ByteBuffer*, Timestamp)>;
-using MessageWriteCompleteCallback = function<void (TcpConnectionPtr)>;
-using TcpConnectionCloseCallback = function<void (TcpConnectionPtr)>;
+class TcpConnection;
 
+// TcpConnection
+using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
+
+using TcpConnectionCallback = function<void (const TcpConnectionPtr&)>;
+using MessageReadCallback = function<void (const TcpConnectionPtr&, ByteBuffer*, Timestamp)>;
+using MessageWriteCompleteCallback = function<void (const TcpConnectionPtr&)>;
+using TcpConnectionCloseCallback = function<void (const TcpConnectionPtr&)>;
+
+// TcpServer
 using NewConnectionCallback = function<void (int sockFd, INetAddr clientAddr)>;
-// std::function callbacks definitions
+
+
+// TcpClient
 
 // Channel
 using ReadCallback = function<void (Timestamp)>;
@@ -26,4 +48,5 @@ using ErrorCallback = function<void ()>;
 
 
 }
+
 #endif

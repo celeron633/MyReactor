@@ -1,6 +1,7 @@
 #ifndef __TCP_CONNECTION_HH__
 #define __TCP_CONNECTION_HH__
 
+#include "Callbacks.hh"
 #include "NonCopyable.hh"
 #include "Log.hh"
 #include "ByteBuffer.hh"
@@ -31,13 +32,6 @@ namespace net {
 
 // enable 'enable_shared_from_this' to get a shared this pointer
 class TcpConnection : public enable_shared_from_this<TcpConnection>, public NonCopyable {
-    using TcpConnectionPtr = shared_ptr<TcpConnection>;
-
-    using TcpConnectionCallback = function<void (TcpConnectionPtr)>;
-    using MessageReadCallback = function<void (TcpConnectionPtr, ByteBuffer*, Timestamp)>;
-    using MessageWriteCompleteCallback = function<void (TcpConnectionPtr)>;
-    using TcpConnectionCloseCallback = function<void (TcpConnectionPtr)>;
-
 public:
     enum TcpConnState {
         kDisconnected,
@@ -136,8 +130,8 @@ private:
     atomic_int _status;
 
     // user-level buffers for non-blocking I/O
-    ByteBuffer _readBuf;
-    ByteBuffer _writeBuf;
+    base::ByteBuffer _readBuf;
+    base::ByteBuffer _writeBuf;
 
     // callbacks for TcpConnection
     TcpConnectionCallback _connectionOKCallback;

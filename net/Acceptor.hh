@@ -5,6 +5,7 @@
 #include "Callbacks.hh"
 #include "Socket.hh"
 #include "EventLoop.hh"
+#include "Channel.hh"
 
 namespace net {
 

@@ -91,6 +91,9 @@ ssize_t TcpConnection::WriteInLoop(const char* buf, size_t len)
 
         if (writeLen == (ssize_t)len) {
             LOG_DEBUG("call ::write() with full-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
+            if (this->_messageWriteCompleteCallback) {
+                _messageWriteCompleteCallback(shared_from_this());
+            }
             return writeLen;
         } else if (writeLen < (ssize_t)len) {
             LOG_DEBUG("call ::write() with part-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
@@ -148,6 +151,9 @@ void TcpConnection::HandleWrite()
         this->_writeBuf.RetrieveAll();
         LOG_DEBUG("::write send all writeBuf data! will DisableWrite!");
         this->_channel->DisableWrite(); // 全部发送完了不再关注写事件
+        if (this->_messageWriteCompleteCallback) {
+            this->_messageWriteCompleteCallback(shared_from_this());
+        }
     } else if (actualWriteSize < (ssize_t)bufRemainingSize) {    // 写缓存发送出去了部分
         LOG_DEBUG("::write send [%ld] bytes from writeBuf", actualWriteSize);
         this->_writeBuf.Retrieve(actualWriteSize);

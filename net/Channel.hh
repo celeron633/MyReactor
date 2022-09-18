@@ -1,6 +1,7 @@
 #ifndef __CHANNEL_HH__
 #define __CHANNEL_HH__
 
+#include "Callbacks.hh"
 #include "NonCopyable.hh"
 #include "Mutex.hh"
 #include "Timestamp.hh"
@@ -22,11 +23,6 @@ class EventLoop;
 
 // one socket fd regist to one eventloop
 class Channel : NonCopyable {
-    using ReadCallback = function<void (Timestamp)>;
-    using WriteCallback = function<void ()>;
-    using CloseCallback = function<void ()>;
-    using ErrorCallback = function<void ()>;
-
 public:
     Channel(EventLoop *loop, int fd);
     ~Channel();

@@ -45,8 +45,8 @@ public:
     bool InEventLoopThread(void);
 
 private:
-    Poller *_poller;
-    vector<Functor> _pendingFunctors;
+    Poller *_poller;    // multiplexer
+    vector<Functor> _pendingFunctors;   // pending jobs to run in eventloop thread
 
     // 状态相关
     std::atomic_bool _looping;

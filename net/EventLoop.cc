@@ -14,7 +14,8 @@ using namespace net;
 
 const int kPollTimeoutMs = 3 * 1000;
 
-EventLoop::EventLoop() : _looping(false), _quit(false), _tid(CurrentThread::GetThreadId())
+EventLoop::EventLoop() : _looping(false), _quit(false), \
+    _tid(CurrentThread::GetThreadId())
 {
     LOG_INFO("EventLoop object constructed, tid:[%d]", this->_tid);
     _poller = new EPollPoller(this);
@@ -83,6 +84,8 @@ void EventLoop::RunInLoop(Functor func)
 
 void EventLoop::QueueInLoop(Functor func)
 {
+    // TODO: make loop return from 'Poll' immediately, we need a eventFd to get this done
+
     _mutex.Lock();
     _pendingFunctors.emplace_back(func);
     _mutex.Unlock();
