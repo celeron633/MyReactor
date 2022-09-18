@@ -4,6 +4,9 @@
 #include "EventLoop.hh"
 #include "TcpServer.hh"
 
+using net::EventLoop;
+using net::TcpServer;
+
 class HttpServerMgr {
 
 };
