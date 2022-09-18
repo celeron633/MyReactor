@@ -27,7 +27,7 @@ ssize_t ByteBuffer::ReadFd(int fd, int* saveErrno)
     bzero((void*)buf, sizeof(buf));
 
     ssize_t readRet = read(fd, (void *)buf, sizeof(buf));
-    if (readRet <= 0) {
+    if (readRet < 0) {
         perror("read");
         *saveErrno = errno;
     } else {
