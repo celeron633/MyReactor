@@ -51,8 +51,9 @@ void EventLoop::loop()
         // 2. handle pending functors
         _mutex.Lock();
         if (!_pendingFunctors.empty()) {
-            for (auto &it : _pendingFunctors) {
-                it();
+            for (auto it = _pendingFunctors.begin(); it != _pendingFunctors.end(); ) {
+                (*(it))();  // call functor
+                it = _pendingFunctors.erase(it);    // then remove it from task queue
             }
         }
         _mutex.Unlock();
