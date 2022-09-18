@@ -31,7 +31,7 @@ void Logger::SetFilterLevel(int level)
 void Logger::Crash()
 {
     int* addr = 0x0;
-    *addr = 0;
+    *addr = 0;  // this will definitely cause a crash
 }
 
 void Logger::Append(string str)
@@ -103,7 +103,7 @@ void Logger::Append(string str, const char *func, int lineNo)
         break;
     }
 
-    printf(" %s@%d", func, lineNo);
+    printf(" %s@LINE[%d]", func, lineNo);
     // when printf end with a newline, the previous buffered content will output
     printf("-> %s\n", str.c_str());
 }

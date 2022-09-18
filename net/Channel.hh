@@ -24,109 +24,53 @@ class EventLoop;
 // one socket fd regist to one eventloop
 class Channel : NonCopyable {
 public:
-    Channel(EventLoop *loop, int fd);
+    Channel(EventLoop* loop, int fd);
     ~Channel();
 
     // EventLoop中loop返回后处理事件
     void HandleEvent(Timestamp timestamp);
 
     // 是否关注了可写事件
-    bool IsWriteEnabled()
-    {
-        return _isWriteEnabled;
-    }
+    bool IsWriteEnabled();
 
     // channel index
-    void SetIndex(int idx)
-    {
-        this->_index = idx;
-    }
-    int GetIndex()
-    {
-        return _index;
-    }
+    void SetIndex(int index);
+    int GetIndex();
 
     // 返回channel对应的fd
-    int GetFd()
-    {
-        return _fd;
-    }
+    int GetFd();
     // 返回channel对应的loop
-    EventLoop *GetEventLoop()
-    {
-        return _loop;
-    }
+    EventLoop* GetEventLoop();
 
     // events && revents
-    int GetEvents()
-    {
-        return _events;
-    }
-    int GetrEvents()
-    {
-        return _rEvents;
-    }
+    int GetEvents();
+    int GetrEvents();
 
     // epoll_wait返回后调用
-    void SetrEvents(int events)
-    {
-        this->_rEvents = events;
-    }
+    void SetrEvents(int events);
 
     // 设置Channel对应事件的回调
-    void SetReadCallback(ReadCallback cb)
-    {
-        _readCallback = cb;
-    }
-    void SetWriteCallback(WriteCallback cb)
-    {
-        _writeCallback = cb;
-    }
-    void SetCloseCallback(CloseCallback cb)
-    {
-        _closeCallback = cb;
-    }
-    void SetErrorCallback(ErrorCallback cb)
-    {
-        _errorCallback = cb;
-    }
+    void SetReadCallback(ReadCallback cb);
+    void SetWriteCallback(WriteCallback cb);
+    void SetCloseCallback(CloseCallback cb);
+    void SetErrorCallback(ErrorCallback cb);
 
     // 开启/关闭读写
-    void EnableRead()
-    {
-        this->_events |= kReadEvent;
-        Update();
-    }
-    void DisableRead()
-    {
-        this->_events &= ~kReadEvent;
-        Update();
-    }
-    void EnableWrite()
-    {
-        this->_events |= kWriteEvent;
-        Update();
-        _isWriteEnabled = true;
-    }
-    void DisableWrite()
-    {
-        this->_events &= ~kWriteEvent;
-        Update();
-        _isWriteEnabled = false;
-    }
-    void DisableAll()
-    {
-        this->_events = kNoneEvent;
-        Update();
-    }
+    void EnableRead();
+    void DisableRead();
+    void EnableWrite();
+    void DisableWrite();
+    void DisableAll();
 public:
     void Remove();
 private:
     void Update();
+public:
+   static string Events2String(int events);
 
 private:
     // EventLoop对象的指针
-    EventLoop *_loop;
+    EventLoop* _loop;
     // Channel对象对应的fd 
     int _fd;
     // Channel对象的序号

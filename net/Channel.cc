@@ -11,18 +11,109 @@ const int Channel::kReadEvent = EPOLLIN | EPOLLPRI;
 const int Channel::kWriteEvent = EPOLLOUT;
 const int Channel::kNoneEvent = 0;
 
-Channel::Channel(EventLoop *loop, int fd) : _loop(loop), _fd(fd), _index(-1), _events(0), _rEvents(0)
+Channel::Channel(EventLoop* loop, int fd) : _loop(loop), _fd(fd), _index(-1), _events(0), _rEvents(0)
 {
     LOG_INFO("Channel construct");
+
+    // the following should not be done by constructor
     // 关注读取事件
-    this->EnableRead();
+    // this->EnableRead();
     // 不关注可写事件
-    this->DisableWrite();
+    // this->DisableWrite();
 }
 
 Channel::~Channel()
 {
     LOG_INFO("Channel destruct");
+}
+
+bool Channel::IsWriteEnabled()
+{
+    return _isWriteEnabled;
+}
+
+void Channel::SetIndex(int index)
+{
+    this->_index = index;
+}
+
+int Channel::GetIndex()
+{
+    return _index;
+}
+
+// 返回channel对应的fd
+int Channel::GetFd()
+{
+    return _fd;
+}
+// 返回channel对应的loop
+EventLoop* Channel::GetEventLoop()
+{
+    return _loop;
+}
+
+// events && revents
+int Channel::GetEvents()
+{
+    return _events;
+}
+int Channel::GetrEvents()
+{
+    return _rEvents;
+}
+
+// epoll_wait返回后调用
+void Channel::SetrEvents(int events)
+{
+    this->_rEvents = events;
+}
+
+// 设置Channel对应事件的回调
+void Channel::SetReadCallback(ReadCallback cb)
+{
+    _readCallback = cb;
+}
+void Channel::SetWriteCallback(WriteCallback cb)
+{
+    _writeCallback = cb;
+}
+void Channel::SetCloseCallback(CloseCallback cb)
+{
+    _closeCallback = cb;
+}
+void Channel::SetErrorCallback(ErrorCallback cb)
+{
+    _errorCallback = cb;
+}
+
+// 开启/关闭读写
+void Channel::EnableRead()
+{
+    this->_events |= kReadEvent;
+    Update();
+}
+void Channel::DisableRead()
+{
+    this->_events &= ~kReadEvent;
+    Update();
+}
+void Channel::EnableWrite()
+{
+    this->_events |= kWriteEvent;
+    Update();
+    _isWriteEnabled = true;
+}
+void Channel::DisableWrite()
+{
+    this->_events &= ~kWriteEvent;
+    Update();
+    _isWriteEnabled = false;
+}
+void Channel::DisableAll()
+{
+    this->_events = kNoneEvent;
+    Update();
 }
 
 void Channel::HandleEvent(Timestamp timestamp)
@@ -70,4 +161,19 @@ void Channel::Update()
 void Channel::Remove()
 {
     _loop->RemoveChannel(this);
+}
+
+string Channel::Events2String(int events)
+{
+    string evStr = "";
+
+    if (events & kReadEvent) {
+        evStr += "|EV_READ";
+    }
+    if (events & kWriteEvent) {
+        evStr += "|EV_WRITE";
+    }
+    evStr += "|";
+
+    return evStr;
 }

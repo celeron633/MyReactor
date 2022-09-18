@@ -65,7 +65,7 @@ Timestamp EPollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
 void EPollPoller::UpdateChannel(Channel *channel)
 {
     int events = channel->GetEvents();
-    LOG_DEBUG("events: [%d]", events);
+    LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
 
     int fd = channel->GetFd();
     LOG_DEBUG("fd: [%d]", channel->GetFd());
@@ -76,7 +76,7 @@ void EPollPoller::UpdateChannel(Channel *channel)
 
     // add (regist this channel to epoll object)
     if (!HasChannel(channel)) {
-        LOG_INFO("channel [%d] does not exist!", fd);
+        LOG_INFO("channel [%d] does not exist! call EPOLL_CTL_ADD", fd);
         if (epoll_ctl(_epFd, EPOLL_CTL_ADD, fd, &epEvent) < 0) {
             LOG_ERROR("epoll_ctl EPOLL_CTL_ADD failed");
             perror("epoll_ctl");
@@ -98,7 +98,7 @@ void EPollPoller::RemoveChannel(Channel *channel)
     LOG_DEBUG("fd: [%d]", channel->GetFd());
 
     int events = channel->GetEvents();
-    LOG_DEBUG("events: [%d]", events);
+    LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
 
     struct epoll_event epEvent;
     epEvent.data.ptr = (void *)channel;
