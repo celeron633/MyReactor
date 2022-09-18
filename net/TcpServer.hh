@@ -40,6 +40,7 @@ public:
     {
         this->_messageWriteCompleteCallback = cb;
     }
+private:
     void setTcpConnectionCloseCallback(const TcpConnectionCloseCallback& cb)
     {
         this->_tcpConnectionCloseCallback = cb;

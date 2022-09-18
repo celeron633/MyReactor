@@ -50,10 +50,10 @@ public:
     void SetrEvents(int events);
 
     // 设置Channel对应事件的回调
-    void SetReadCallback(ReadCallback cb);
-    void SetWriteCallback(WriteCallback cb);
-    void SetCloseCallback(CloseCallback cb);
-    void SetErrorCallback(ErrorCallback cb);
+    void SetReadCallback(const ReadCallback& cb);
+    void SetWriteCallback(const WriteCallback& cb);
+    void SetCloseCallback(const CloseCallback& cb);
+    void SetErrorCallback(const ErrorCallback& cb);
 
     // 开启/关闭读写
     void EnableRead();

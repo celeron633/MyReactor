@@ -5,7 +5,7 @@
 namespace base {
 
 namespace CurrentThread {
-__thread pid_t _tid;
+__thread pid_t _tid;    // TLS variable
 
 pid_t GetThreadId()
 {

@@ -70,19 +70,19 @@ void Channel::SetrEvents(int events)
 }
 
 // 设置Channel对应事件的回调
-void Channel::SetReadCallback(ReadCallback cb)
+void Channel::SetReadCallback(const ReadCallback& cb)
 {
     _readCallback = cb;
 }
-void Channel::SetWriteCallback(WriteCallback cb)
+void Channel::SetWriteCallback(const WriteCallback& cb)
 {
     _writeCallback = cb;
 }
-void Channel::SetCloseCallback(CloseCallback cb)
+void Channel::SetCloseCallback(const CloseCallback& cb)
 {
     _closeCallback = cb;
 }
-void Channel::SetErrorCallback(ErrorCallback cb)
+void Channel::SetErrorCallback(const ErrorCallback& cb)
 {
     _errorCallback = cb;
 }
