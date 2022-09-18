@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <string.h>
+#include <stdio.h>
 
 #include <strings.h>    // this is a GNU header, not a std c header
 
@@ -26,6 +28,7 @@ ssize_t ByteBuffer::ReadFd(int fd, int* saveErrno)
 
     ssize_t readRet = read(fd, (void *)buf, sizeof(buf));
     if (readRet <= 0) {
+        perror("read");
         *saveErrno = errno;
     } else {
         Append(buf, readRet);   // 追加到buffer中
