@@ -21,6 +21,7 @@ public:
     }
 private:
     void handleRead(Timestamp evTime);
+    void bindAddr(INetAddr& addr);
     void listen();
 private:
     EventLoop* _eventLoop;

@@ -16,6 +16,11 @@ Acceptor::~Acceptor()
 
 }
 
+void Acceptor::bindAddr(INetAddr& addr)
+{
+    this->_listenSocket.Bind(addr);
+}
+
 void Acceptor::listen()
 {
     this->_listenSocket.Listen();
@@ -23,6 +28,9 @@ void Acceptor::listen()
 
 void Acceptor::start()
 {
+    LOG_INFO("listenAddr: %s", this->_listenAddr.GetAddrAndPort().c_str());
+    // bind listen addr
+    this->bindAddr(_listenAddr);
     // listen to specificed sockaddr
     listen();
     // regist to epoll for reading event
