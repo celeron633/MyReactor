@@ -1,6 +1,8 @@
 #include "EPollPoller.hh"
 #include "Log.hh"
 
+#include "Common.hh"
+
 #include <vector>
 
 using namespace net;
@@ -10,8 +12,11 @@ using namespace std;
 const int kEpollSize = 1024;
 const int kEpollPollTmoMs = 3 * 1000;
 
-// TODO: why use loop to initialize base class
-EPollPoller::EPollPoller(EventLoop *eventLoop) : Poller(eventLoop), _eventsNum(0)
+// why use loop to initialize base class
+// update: 2022-09-18
+// base Class has no default constructor, it must be constructed with one or more arg
+// and must be done in initialization list
+EPollPoller::EPollPoller(EventLoop *eventLoop) : Poller(eventLoop), _epollFd(0), _eventsNum(0)
 {
     _epollFd = epoll_create(kEpollSize);
     LOG_DEBUG("_epollFd: [%d]", _epollFd);
@@ -43,6 +48,7 @@ Timestamp EPollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
 {
     LOG_DEBUG("Poll begin");
 
+    // note: this won't change the size() of vector, use the return value to determin how many envets
     _eventsNum = epoll_wait(_epollFd, _epEvents.data(), kEpollSize, timeoutMs);
     Timestamp retStamp;
     LOG_DEBUG("eventsNum: [%d]", _eventsNum);
@@ -64,13 +70,13 @@ Timestamp EPollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
     return retStamp;
 }
 
-void EPollPoller::UpdateChannel(Channel *channel)
+bool EPollPoller::UpdateChannel(Channel *channel)
 {
     int events = channel->GetEvents();
     LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
 
     int fd = channel->GetFd();
-    LOG_DEBUG("fd: [%d]", channel->GetFd());
+    LOG_DEBUG("fd: [%d], index: [%d]", channel->GetFd(), channel->GetIndex());
 
     struct epoll_event epEvent;
     epEvent.data.ptr = (void *)channel;
@@ -91,10 +97,13 @@ void EPollPoller::UpdateChannel(Channel *channel)
     if (epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &epEvent) < 0) {
         LOG_ERROR("epoll_ctl EPOLL_CTL_MOD failed");
         perror("epoll_ctl");
+        return false;
     }
+
+    return true;
 }
 
-void EPollPoller::RemoveChannel(Channel *channel)
+bool EPollPoller::RemoveChannel(Channel *channel)
 {
     int fd = channel->GetFd();
     LOG_DEBUG("fd: [%d]", channel->GetFd());
@@ -107,12 +116,14 @@ void EPollPoller::RemoveChannel(Channel *channel)
     epEvent.events = events;
 
     if (epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, &epEvent) < 0) {
+        perror("epoll_ctl");
         LOG_ERROR("epoll_ctl EPOLL_CTL_DEL failed!");
+        return false;
     } else {
         auto it = _channelMap.find(fd);
         if (it != _channelMap.end()) {
             _channelMap.erase(it);
         }
     }
-    return;
+    return true;
 }

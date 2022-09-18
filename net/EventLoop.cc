@@ -105,14 +105,14 @@ void EventLoop::QueueInLoop(Functor func)
     _mutex.Unlock();
 }
 
-void EventLoop::UpdateChannel(Channel* channel)
+bool EventLoop::UpdateChannel(Channel* channel)
 {
-    this->_poller->UpdateChannel(channel);
+    return this->_poller->UpdateChannel(channel);
 }
 
-void EventLoop::RemoveChannel(Channel* ch)
+bool EventLoop::RemoveChannel(Channel* ch)
 {
-    _poller->RemoveChannel(ch);
+    return _poller->RemoveChannel(ch);
 }
 
 void EventLoop::AssertInEventLoopThread(void)

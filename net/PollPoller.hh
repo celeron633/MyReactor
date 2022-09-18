@@ -15,8 +15,8 @@ public:
 
     // implement interfaces
     virtual Timestamp Poll(int timeoutMs, ChannelList *activeChannels);
-    virtual void UpdateChannel(Channel *channel);
-    virtual void RemoveChannel(Channel *channel);
+    virtual bool UpdateChannel(Channel *channel);
+    virtual bool RemoveChannel(Channel *channel);
 private:
     void FillActiveChannels(ChannelList *channelList);
 private:

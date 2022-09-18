@@ -2,6 +2,8 @@
 #include "Log.hh"
 #include "EventLoop.hh"
 
+#include "Common.hh"
+
 using namespace base;
 using namespace net;
 using namespace std;
@@ -11,7 +13,7 @@ const int Channel::kReadEvent = EPOLLIN | EPOLLPRI;
 const int Channel::kWriteEvent = EPOLLOUT;
 const int Channel::kNoneEvent = 0;
 
-Channel::Channel(EventLoop* loop, int fd) : _loop(loop), _fd(fd), _index(-1), _events(0), _rEvents(0)
+Channel::Channel(EventLoop* loop, int fd) : _loop(loop), _fd(fd), _index(kInitialIndex), _events(0), _rEvents(0)
 {
     LOG_INFO("Channel construct");
 
@@ -113,6 +115,7 @@ void Channel::DisableWrite()
 void Channel::DisableAll()
 {
     this->_events = kNoneEvent;
+    this->_index = kDeleteIndex;
     Update();
 }
 

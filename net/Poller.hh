@@ -27,8 +27,8 @@ public:
 
     // derived poller class need to implement such interfaces
     virtual Timestamp Poll(int timeoutMs, ChannelList *activeChannels) = 0;
-    virtual void UpdateChannel(Channel *channel) = 0;
-    virtual void RemoveChannel(Channel *channel) = 0;
+    virtual bool UpdateChannel(Channel *channel) = 0;
+    virtual bool RemoveChannel(Channel *channel) = 0;
 
     // whether a channel has already registed to the poller
     bool HasChannel(Channel *channel);

@@ -73,8 +73,8 @@ private:
     EventLoop* _loop;
     // Channel对象对应的fd 
     int _fd;
-    // Channel对象的序号
-    int _index;
+    // Channel对象的状态
+    int _index; // -1: initial, 1: added, 2: deleted
 
     // 注册到epoll红黑树上去时的fd对应的感兴趣的事件
     int _events;
