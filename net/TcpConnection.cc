@@ -5,9 +5,9 @@ using namespace net;
 using namespace std;
 
 TcpConnection::TcpConnection(EventLoop* eventLoop, string name, int sockFd, const INetAddr& peerAddr, const INetAddr& localAddr) \
-    : _eventLoop(eventLoop), _channel(new Channel(_eventLoop, _sockFd)), _sockFd(sockFd), _connName(name), \
+    : _eventLoop(eventLoop), _sockFd(sockFd), _channel(new Channel(_eventLoop, _sockFd)), _connName(name), \
     _peerAddr(peerAddr), _localAddr(localAddr), _status(kConnecting){
-    LOG_INFO("TcpConnection object constructed! connName: [%s]", _connName.c_str());
+    LOG_INFO("TcpConnection object constructed! connName: [%s], peerFd: [%d]", _connName.c_str(), _sockFd);
     
     // set callbacks for channel
     _channel->SetReadCallback(bind(&TcpConnection::HandleRead, this, std::placeholders::_1));

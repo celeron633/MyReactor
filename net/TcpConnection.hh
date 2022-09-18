@@ -111,10 +111,11 @@ private:
 private:
     // one connection has one channel, one loop has one or more channel(connection)
     EventLoop* _eventLoop;
-    unique_ptr<net::Channel> _channel;  // use smart pointer for channel
 
     // tcp connection fd
     const int _sockFd;
+
+    unique_ptr<net::Channel> _channel;  // use smart pointer for channel
 
     // connection identifer name
     const string _connName;
