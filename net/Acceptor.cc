@@ -41,7 +41,7 @@ void Acceptor::start()
 // listen的fd可读, 有客户端接上来了, 需要accept
 void Acceptor::handleRead(Timestamp evTime)
 {
-    this->_eventLoop->AssertInEventLoop();  // make sure this happens in loop thread
+    this->_eventLoop->AssertInEventLoopThread();  // make sure this happens in loop thread
 
     LOG_INFO("Acceptor::handleRead begin, event timestamp: [%s]", evTime.ConvertToString().c_str());
     int clientConnFd = 0;

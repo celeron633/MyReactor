@@ -43,7 +43,7 @@ void TcpServer::DefaultTcpConnectionHandler(const TcpConnectionPtr& con)
 // handle incoming tcp client
 void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
 {
-    this->_eventLoop->AssertInEventLoop();
+    this->_eventLoop->AssertInEventLoopThread();
     LOG_INFO("HandleNewConnection begin! sockFd: [%d], client info: [%s]", sockFd, clientAddr.GetAddrAndPort().c_str());
 
     string tcpConnStr = this->_listenAddr.GetAddrAndPort() + "<->" + clientAddr.GetAddrAndPort();
@@ -69,7 +69,7 @@ void TcpServer::RemoveConnection(const TcpConnectionPtr& con)
 
 void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
 {
-    this->_eventLoop->AssertInEventLoop();  // make sure this happens in loop thread
+    this->_eventLoop->AssertInEventLoopThread();  // make sure this happens in loop thread
 
     LOG_DEBUG("RemoveConnectionInLoop begin! conn: [%s]", con->GetConnName().c_str());
 

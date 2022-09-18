@@ -26,7 +26,7 @@ TcpConnection::~TcpConnection()
 // handler for event 'READ'
 void TcpConnection::HandleRead(Timestamp readTime)
 {
-    this->_eventLoop->AssertInEventLoop();
+    this->_eventLoop->AssertInEventLoopThread();
 
     LOG_INFO("conn: [%s] HandleRead begin, time: [%s]", this->_connName.c_str(), readTime.ConvertToString().c_str());
     int saveErrno = 0;
@@ -60,7 +60,7 @@ void TcpConnection::HandleClose()
     }
 
     // make sure this happens in EventLoop thread
-    _eventLoop->AssertInEventLoop();
+    _eventLoop->AssertInEventLoopThread();
     LOG_INFO("conn: [%s], status: [%s], fd: [%d]", _connName.c_str(), State2String(), _sockFd);
 
     LOG_INFO("conn: [%s] HandleRead close begin", _connName.c_str());
@@ -94,7 +94,7 @@ void TcpConnection::Write(const char* buf, size_t len)
 void TcpConnection::WriteInLoop(const char* buf, size_t len)
 {
     // make sure this happens in loop thread, not in working thread
-    _eventLoop->AssertInEventLoop();
+    _eventLoop->AssertInEventLoopThread();
 
     LOG_DEBUG("WriteInLoop begin!");
     // if the channel is not interested in 'Writable', just send to client/server with ::write
@@ -129,7 +129,7 @@ void TcpConnection::HandleWrite()
 {
     LOG_INFO("HandleWrite begin");
     // make sure in loop thread
-    this->_eventLoop->AssertInEventLoop();
+    this->_eventLoop->AssertInEventLoopThread();
 
     if (!_channel->IsWriteEnabled()) {
         LOG_WARN("call HandleWrite while channel is not writeEnabled!");
@@ -195,7 +195,7 @@ void TcpConnection::ForceClose()
 // this will run in EventLoop thread
 void TcpConnection::ForceCloseInLoop()
 {
-    _eventLoop->AssertInEventLoop();
+    _eventLoop->AssertInEventLoopThread();
     // _eventLoop->QueueInLoop(bind(&TcpConnection::HandleClose, this)); BUG
 
     if (this->_status == kDisconnecting || this->_status == kConnected) {
@@ -213,7 +213,7 @@ void TcpConnection::ConnectionEstablishedInLoop()
 {
     LOG_DEBUG("ConnectionEstablishedInLoop begin");
     // make sure all things happened in LoopThread
-    this->_eventLoop->AssertInEventLoop();
+    this->_eventLoop->AssertInEventLoopThread();
 
     // only do following step when state is kConnecting
     if (_status != kConnecting) {
@@ -242,7 +242,7 @@ void TcpConnection::ConnectionDestory()
 
 void TcpConnection::ConnectionDestoryInLoop()
 {
-    this->_eventLoop->AssertInEventLoop();
+    this->_eventLoop->AssertInEventLoopThread();
 
     LOG_DEBUG("ConnectionDestoryInLoop begin!");
 

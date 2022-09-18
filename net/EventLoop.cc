@@ -103,13 +103,13 @@ void EventLoop::RemoveChannel(Channel* ch)
     _poller->RemoveChannel(ch);
 }
 
-void EventLoop::AssertInEventLoop(void)
+void EventLoop::AssertInEventLoopThread(void)
 {
 #ifdef USE_BUILTIN_ASSERT
     assert(CurrentThread::GetThreadId() == this->_tid);
 #else
     if (CurrentThread::GetThreadId() != this->_tid) {
-        LOG_FATAL("AssertInEventLoop!");
+        LOG_FATAL("AssertInEventLoopThread!");
     }
 #endif
 }

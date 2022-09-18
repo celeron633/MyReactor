@@ -41,7 +41,7 @@ public:
     // 加入待执行回调队列
     void QueueInLoop(Functor func);
 
-    void AssertInEventLoop(void);
+    void AssertInEventLoopThread(void);
     bool InEventLoopThread(void);
 
 private:
