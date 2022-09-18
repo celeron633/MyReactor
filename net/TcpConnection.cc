@@ -277,18 +277,13 @@ const char* TcpConnection::State2String()
     {
     case kDisconnected:
         return "Disconnected";
-        break;
     case kConnected:
         return "Connected";
-        break;
     case kConnecting:
         return "Connecting";
-        break;
     case kDisconnecting:
         return "Disconnecting";
-        break;
     default:
         return "Unknown";
-        break;
     }
 }
