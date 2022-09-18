@@ -25,6 +25,8 @@ make
 
  - [x] 基本功能测试（连接建立，读写，断开） 
 
+ - [ ] 实现TimerQueue
+
  - [ ] 实现TcpClient类 
 
  - [ ] 优化Log打印功能
