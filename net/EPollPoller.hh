@@ -23,8 +23,9 @@ public:
 private:
     void FillActiveChannels(ChannelList *channelList);
 private:
-    int _epFd;
+    int _epollFd;
     EpollEvents _epEvents;
+    int _eventsNum;
 };
 
 };

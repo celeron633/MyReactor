@@ -11,10 +11,10 @@ const int kEpollSize = 1024;
 const int kEpollPollTmoMs = 3 * 1000;
 
 // TODO: why use loop to initialize base class
-EPollPoller::EPollPoller(EventLoop *eventLoop) : Poller(eventLoop)
+EPollPoller::EPollPoller(EventLoop *eventLoop) : Poller(eventLoop), _eventsNum(0)
 {
-    _epFd = epoll_create(kEpollSize);
-    LOG_DEBUG("_epFd: [%d]", _epFd);
+    _epollFd = epoll_create(kEpollSize);
+    LOG_DEBUG("_epollFd: [%d]", _epollFd);
 
     _epEvents.reserve(kEpollSize);
 }
@@ -26,28 +26,30 @@ EPollPoller::~EPollPoller()
 
 void EPollPoller::FillActiveChannels(ChannelList *channelList)
 {
-    int epEventsSize = _epEvents.size();
+    LOG_DEBUG("FillActiveChannels begin!");
 
-    for (int i = 0; i < epEventsSize; ++i) {
+    for (int i = 0; i < _eventsNum; ++i) {
         // get 'Channel *' pointer from epoll_data
         Channel *channel = (Channel *)_epEvents[i].data.ptr;
+        LOG_DEBUG("channel addr: %p", channel);
         channel->SetrEvents(_epEvents[i].events);
 
         channelList->push_back(channel);
     }
+    LOG_DEBUG("FillActiveChannels end");
 }
 
 Timestamp EPollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
 {
     LOG_DEBUG("Poll begin");
 
-    int eventsNum = epoll_wait(_epFd, _epEvents.data(), kEpollSize, timeoutMs);
+    _eventsNum = epoll_wait(_epollFd, _epEvents.data(), kEpollSize, timeoutMs);
     Timestamp retStamp;
-    LOG_DEBUG("eventsNum: [%d]", eventsNum);
+    LOG_DEBUG("eventsNum: [%d]", _eventsNum);
 
-    if (eventsNum == 0) {
+    if (_eventsNum == 0) {
         LOG_DEBUG("Poll timeout");
-    } else if (eventsNum > 0) {
+    } else if (_eventsNum > 0) {
         FillActiveChannels(activeChannels);
     } else {
         if (errno != EINTR) {
@@ -77,7 +79,7 @@ void EPollPoller::UpdateChannel(Channel *channel)
     // add (regist this channel to epoll object)
     if (!HasChannel(channel)) {
         LOG_INFO("channel [%d] does not exist! call EPOLL_CTL_ADD", fd);
-        if (epoll_ctl(_epFd, EPOLL_CTL_ADD, fd, &epEvent) < 0) {
+        if (epoll_ctl(_epollFd, EPOLL_CTL_ADD, fd, &epEvent) < 0) {
             LOG_ERROR("epoll_ctl EPOLL_CTL_ADD failed");
             perror("epoll_ctl");
         } else {
@@ -86,7 +88,7 @@ void EPollPoller::UpdateChannel(Channel *channel)
     }
 
     // update existed 
-    if (epoll_ctl(_epFd, EPOLL_CTL_MOD, fd, &epEvent) < 0) {
+    if (epoll_ctl(_epollFd, EPOLL_CTL_MOD, fd, &epEvent) < 0) {
         LOG_ERROR("epoll_ctl EPOLL_CTL_MOD failed");
         perror("epoll_ctl");
     }
@@ -104,7 +106,7 @@ void EPollPoller::RemoveChannel(Channel *channel)
     epEvent.data.ptr = (void *)channel;
     epEvent.events = events;
 
-    if (epoll_ctl(_epFd, EPOLL_CTL_DEL, fd, &epEvent) < 0) {
+    if (epoll_ctl(_epollFd, EPOLL_CTL_DEL, fd, &epEvent) < 0) {
         LOG_ERROR("epoll_ctl EPOLL_CTL_DEL failed!");
     } else {
         auto it = _channelMap.find(fd);

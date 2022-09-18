@@ -43,6 +43,7 @@ void EventLoop::loop()
         Timestamp pollRetTime = _poller->Poll(kPollTimeoutMs, &_activeChannels);
         LOG_INFO("pollRetTime: [%s]", pollRetTime.ConvertToString().c_str());
 
+        LOG_DEBUG("activeChannels' count: [%lu]", _activeChannels.size());
         for (ChannelList::iterator it = _activeChannels.begin(); it != _activeChannels.end(); ++it) {
             (*it)->HandleEvent(pollRetTime);
         }
