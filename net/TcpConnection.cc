@@ -86,6 +86,11 @@ void TcpConnection::HandleError()
     HandleClose();
 }
 
+void TcpConnection::Write(const string& str)
+{
+    Write(str.data(), str.length());
+}
+
 void TcpConnection::Write(const char* buf, size_t len)
 {
     this->_eventLoop->RunInLoopThread(bind(&TcpConnection::WriteInLoop, this, buf, len));

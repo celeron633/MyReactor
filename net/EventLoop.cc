@@ -6,6 +6,11 @@
 #include "Channel.hh"
 #include "Log.hh"
 
+#include <stdint.h>
+#include <sys/eventfd.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
 using namespace std;
 using namespace base;
 using namespace net;
@@ -15,14 +20,19 @@ using namespace net;
 const int kPollTimeoutMs = 3 * 1000;
 
 EventLoop::EventLoop() : _looping(false), _quit(false), \
-    _tid(CurrentThread::GetThreadId())
+    _tid(CurrentThread::GetThreadId()), _eventFd(CreateEventFd()), _eventFdChannel(this, _eventFd)
 {
     LOG_INFO("EventLoop object constructed, tid:[%d]", this->_tid);
     _poller = new EPollPoller(this);
+
+    _eventFdChannel.SetReadCallback(bind(&EventLoop::HandleReadEventFd, this));
+    _eventFdChannel.EnableRead();
 }
 
 EventLoop::~EventLoop()
 {
+    _eventFdChannel.DisableAll();
+    _eventFdChannel.Remove();
     LOG_INFO("EventLoop object destructed!");
 }
 
@@ -81,6 +91,7 @@ void EventLoop::RunInLoopThread(Functor func)
         func();
     } else {
         QueueInLoop(func);
+        WakeUp();
     }
 }
 
@@ -117,4 +128,40 @@ void EventLoop::AssertInEventLoopThread(void)
 bool EventLoop::InEventLoopThread(void)
 {
     return CurrentThread::GetThreadId() == this->_tid;
+}
+
+int EventLoop::CreateEventFd()
+{
+    int fd = 0;
+    fd = eventfd(1, O_NONBLOCK | EFD_CLOEXEC);
+    if (fd < 0) {
+        perror("eventfd");
+        LOG_FATAL("CreateEventFd failed!");
+    }
+    LOG_DEBUG("create eventfd ok, fd: [%d]", fd);
+    return fd;
+}
+
+void EventLoop::HandleReadEventFd()
+{
+    // LOG_INFO("HandleReadEventFd begin");
+    uint64_t i = 0;
+
+    int ret = read(this->_eventFd, (void *)&i, sizeof(i));
+    if (ret < 0) {
+        perror("read");
+        LOG_WARN("HandleReadEventFd failed!");
+    }
+    // LOG_INFO("HandleReadEventFd end");
+}
+
+void EventLoop::WakeUp()
+{
+    uint64_t i = 0;
+
+    int ret = write(_eventFd, (void *)&i, sizeof(i));
+    if (ret < 0) {
+        perror("write");
+        LOG_WARN("WakeUp failed!");
+    }
 }

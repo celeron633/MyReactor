@@ -4,6 +4,7 @@
 #include "NonCopyable.hh"
 #include "Mutex.hh"
 #include "CurrentThread.hh"
+#include "Channel.hh"
 
 #include <functional>
 #include <vector>
@@ -44,6 +45,12 @@ public:
     void AssertInEventLoopThread(void);
     bool InEventLoopThread(void);
 
+public:
+    static int CreateEventFd();
+private:
+    void HandleReadEventFd();
+    void WakeUp();
+
 private:
     Poller *_poller;    // multiplexer
     vector<Functor> _pendingFunctors;   // pending jobs to run in eventloop thread
@@ -60,6 +67,10 @@ private:
 
     // active channels
     ChannelList _activeChannels;
+
+private:
+    int _eventFd;
+    Channel _eventFdChannel;
 };
 
 };
