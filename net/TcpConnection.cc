@@ -6,7 +6,7 @@ using namespace std;
 
 TcpConnection::TcpConnection(EventLoop* eventLoop, string name, int sockFd, const INetAddr& peerAddr, const INetAddr& localAddr) \
     : _eventLoop(eventLoop), _sockFd(sockFd), _channel(new Channel(_eventLoop, _sockFd)), _connName(name), \
-    _peerAddr(peerAddr), _localAddr(localAddr), _status(kConnecting){
+    _peerAddr(peerAddr), _localAddr(localAddr), _peerSocket(_sockFd), _status(kConnecting){
     LOG_INFO("TcpConnection object constructed! connName: [%s], peerFd: [%d]", _connName.c_str(), _sockFd);
     
     // set callbacks for channel
@@ -46,7 +46,9 @@ void TcpConnection::HandleRead(Timestamp readTime)
             this->HandleClose();
         }
     }
-    LOG_INFO("conn: [%s] HandleRead End", this->_connName.c_str());
+    if (!(bytesRead == 0)) {
+        LOG_INFO("conn: [%s] HandleRead End", this->_connName.c_str());
+    }
 }
 
 // handle TCP connection close
@@ -66,16 +68,16 @@ void TcpConnection::HandleClose()
     SetState(kDisconnecting);
     // 2. unregist channel from reactor
     this->_channel->DisableAll();
-    this->_channel->Remove();
+    // this->_channel->Remove();
     // 3. close socket
     // this->_peerSocket.Close();   // done by destructor of 'Socket object'
 
-    SetState(kDisconnected);
+    SetState(kDisconnecting);
     if (_connectionCloseCallback) {
         TcpConnectionPtr guard(shared_from_this()); // hold the object by shared_ptr, we must wait until callback finished
         _connectionCloseCallback(guard);
     }
-    LOG_INFO("conn: [%s] HandleRead close end", this->_connName.c_str());
+    // LOG_INFO("conn: [%s] HandleRead close end", this->_connName.c_str());    // this will cause a invalid read
 }
 
 void TcpConnection::HandleError()
@@ -244,12 +246,10 @@ void TcpConnection::ConnectionDestoryInLoop()
 
     LOG_DEBUG("ConnectionDestoryInLoop begin!");
 
-    if (this->_status != kConnected || this->_status != kDisconnecting) {
-        LOG_WARN("call ConnectionDestoryInLoop while status is not kConnected or kDisconnecting");
+    if (this->_status != kConnected && this->_status != kDisconnecting) {
+        LOG_WARN("call ConnectionDestoryInLoop while status is not kConnected or kDisconnecting, status: [%s]", State2String());
         return;
     }
-
-    this->SetState(kDisconnecting);
 
     this->_channel->DisableAll();
     this->_channel->Remove();
@@ -257,10 +257,10 @@ void TcpConnection::ConnectionDestoryInLoop()
     this->SetState(kDisconnected);
 
     // run callback
-    if (this->_connectionCloseCallback) {
+    /* if (this->_connectionCloseCallback) {
         TcpConnectionPtr guard(shared_from_this());
         _connectionCloseCallback(guard);
-    }
+    } */
 
     LOG_DEBUG("ConnectionDestoryInLoop end! TcpConnection object state is [%s]", State2String());
     return;
