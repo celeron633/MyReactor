@@ -72,7 +72,7 @@ void EventLoop::stop()
 }
 
 // run callback in eventloop
-void EventLoop::RunInLoop(Functor func)
+void EventLoop::RunInLoopThread(Functor func)
 {
     pid_t currentTid = CurrentThread::GetThreadId();
     

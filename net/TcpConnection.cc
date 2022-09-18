@@ -86,7 +86,7 @@ void TcpConnection::HandleError()
 
 void TcpConnection::Write(const char* buf, size_t len)
 {
-    this->_eventLoop->RunInLoop(bind(&TcpConnection::WriteInLoop, this, buf, len));
+    this->_eventLoop->RunInLoopThread(bind(&TcpConnection::WriteInLoop, this, buf, len));
 }
 
 void TcpConnection::WriteInLoop(const char* buf, size_t len)
@@ -235,7 +235,7 @@ void TcpConnection::ConnectionEstablishedInLoop()
 
 void TcpConnection::ConnectionDestory()
 {
-    _eventLoop->RunInLoop(bind(&TcpConnection::ConnectionDestoryInLoop, this));
+    _eventLoop->RunInLoopThread(bind(&TcpConnection::ConnectionDestoryInLoop, this));
 }
 
 void TcpConnection::ConnectionDestoryInLoop()

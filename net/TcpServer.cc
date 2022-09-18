@@ -56,7 +56,7 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
     /* this->_connectionMap.insert(std::pair<string, TcpConnectionPtr>(tcpConnStr, \
         make_shared<TcpConnection>(TcpConnection(_eventLoop, tcpConnStr, sockFd, clientAddr, _listenAddr)))); */
 
-    _eventLoop->RunInLoop(bind(&TcpConnection::ConnectionEstablished, con));
+    _eventLoop->RunInLoopThread(bind(&TcpConnection::ConnectionEstablished, con));
 
     LOG_INFO("HandleNewConnection end");
     return;
@@ -64,7 +64,7 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
 
 void TcpServer::RemoveConnection(const TcpConnectionPtr& con)
 {
-    this->_eventLoop->RunInLoop(bind(&TcpServer::RemoveConnectionInLoop, this, con));
+    this->_eventLoop->RunInLoopThread(bind(&TcpServer::RemoveConnectionInLoop, this, con));
 }
 
 void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
@@ -81,6 +81,6 @@ void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
         return;
     }
 
-    this->_eventLoop->RunInLoop(bind(&TcpConnection::ConnectionDestory, con));
+    this->_eventLoop->RunInLoopThread(bind(&TcpConnection::ConnectionDestory, con));
     LOG_DEBUG("RemoveConnectionInLoop end");
 }

@@ -37,7 +37,7 @@ public:
     // 结束事件循环
     void stop();
     // 在EventLoop中运行
-    void RunInLoop(Functor func);
+    void RunInLoopThread(Functor func);
     // 加入待执行回调队列
     void QueueInLoop(Functor func);
 
