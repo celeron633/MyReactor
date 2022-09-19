@@ -76,7 +76,7 @@ bool EPollPoller::UpdateChannel(Channel *channel)
     LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
 
     int fd = channel->GetFd();
-    LOG_DEBUG("fd: [%d], index: [%d]", fd, channel->GetIndex());
+    LOG_DEBUG("fd: [%d], index: [%s]", fd, Channel::Index2String(channel->GetIndex()));
 
     /* struct epoll_event epEvent;
     epEvent.data.ptr = (void *)channel;
@@ -103,7 +103,7 @@ bool EPollPoller::UpdateChannel(Channel *channel)
     int channelIndex = channel->GetIndex();
     if (channelIndex == kInitialIndex || channelIndex == kDeleteIndex) {    // initial or deleted before
         if (_channelMap.find(channel->GetFd()) != _channelMap.end()) {
-            LOG_ERROR("channel index is [%d] while fd [%d] is already in channelMap!", channelIndex, channel->GetFd());
+            LOG_ERROR("channel index is [%s] while fd [%d] is already in channelMap!", Channel::Index2String(channelIndex), channel->GetFd());
             return false;
         }
 
@@ -116,7 +116,7 @@ bool EPollPoller::UpdateChannel(Channel *channel)
         }
     } else if (channelIndex == kAddedIndex) {
         if (_channelMap.find(channel->GetFd()) == _channelMap.end()) {
-            LOG_ERROR("channel index is [%d] while fd [%d] is not in channelMap!", channelIndex, channel->GetFd());
+            LOG_ERROR("channel index is [%s] while fd [%d] is not in channelMap!", Channel::Index2String(channelIndex), channel->GetFd());
             return false;
         }
 
@@ -135,7 +135,7 @@ bool EPollPoller::RemoveChannel(Channel *channel)
     LOG_DEBUG("fd: [%d]", fd);
 
     int events = channel->GetEvents();
-    LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
+    LOG_DEBUG("events: [%s], index: [%s]", Channel::Events2String(events).c_str(), Channel::Index2String(channel->GetIndex()));
 
     /* struct epoll_event epEvent;
     epEvent.data.ptr = (void *)channel;

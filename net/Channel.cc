@@ -180,3 +180,18 @@ string Channel::Events2String(int events)
 
     return evStr;
 }
+
+const char* Channel::Index2String(int index)
+{
+    switch (index) {
+        case kInitialIndex:
+            return "initial";
+        case kAddedIndex:
+            return "added";
+        case kDeleteIndex:
+            return "deleted";
+        default:
+            return "unknown";
+    }
+    return "unknown";
+}

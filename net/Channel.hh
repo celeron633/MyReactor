@@ -67,6 +67,7 @@ private:
     void Update();
 public:
    static string Events2String(int events);
+   static const char* Index2String(int index);
 
 private:
     // EventLoop对象的指针
