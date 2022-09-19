@@ -1,6 +1,8 @@
 #ifndef __BYTE_BUFFER_HH__
 #define __BYTE_BUFFER_HH__
 
+// A simple user-level ByteBuffer using vector
+
 #include <sys/types.h>
 #include <vector>
 
