@@ -55,6 +55,9 @@ void Acceptor::handleRead(Timestamp evTime)
         return;
     }
 
+    // the fd of accepted client must be non-blocking, in some case, if we didn't get a PSH flag, the read will hang
+    Socket::SetSocketNonBlocking(clientConnFd);
+
     INetAddr inetAddr;
     inetAddr.SetSockAddr(sAddr);
     LOG_INFO("accept OK! addr: [%s]", inetAddr.GetAddrAndPort().c_str());
