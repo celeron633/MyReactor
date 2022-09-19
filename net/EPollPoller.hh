@@ -22,6 +22,9 @@ public:
     virtual bool RemoveChannel(Channel *channel);
 private:
     void FillActiveChannels(ChannelList *channelList);
+
+private:
+    bool Update(int op, Channel* channel);  // warpper for epoll_ctl
 private:
     int _epollFd;
     EpollEvents _epEvents;

@@ -76,9 +76,9 @@ bool EPollPoller::UpdateChannel(Channel *channel)
     LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
 
     int fd = channel->GetFd();
-    LOG_DEBUG("fd: [%d], index: [%d]", channel->GetFd(), channel->GetIndex());
+    LOG_DEBUG("fd: [%d], index: [%d]", fd, channel->GetIndex());
 
-    struct epoll_event epEvent;
+    /* struct epoll_event epEvent;
     epEvent.data.ptr = (void *)channel;
     epEvent.events = events;
 
@@ -98,6 +98,32 @@ bool EPollPoller::UpdateChannel(Channel *channel)
         LOG_ERROR("epoll_ctl EPOLL_CTL_MOD failed");
         perror("epoll_ctl");
         return false;
+    } */
+
+    int channelIndex = channel->GetIndex();
+    if (channelIndex == kInitialIndex || channelIndex == kDeleteIndex) {    // initial or deleted before
+        if (_channelMap.find(channel->GetFd()) != _channelMap.end()) {
+            LOG_ERROR("channel index is [%d] while fd [%d] is already in channelMap!", channelIndex, channel->GetFd());
+            return false;
+        }
+
+        // inseret new 
+        if (!Update(EPOLL_CTL_ADD, channel)) {
+            return false;
+        } else {
+            _channelMap.insert(make_pair(channel->GetFd(), channel));
+            channel->SetIndex(kAddedIndex); // this channel is registed to poller
+        }
+    } else if (channelIndex == kAddedIndex) {
+        if (_channelMap.find(channel->GetFd()) == _channelMap.end()) {
+            LOG_ERROR("channel index is [%d] while fd [%d] is not in channelMap!", channelIndex, channel->GetFd());
+            return false;
+        }
+
+        // only update
+        if (!Update(EPOLL_CTL_MOD, channel)) {
+            return false;
+        }
     }
 
     return true;
@@ -106,12 +132,12 @@ bool EPollPoller::UpdateChannel(Channel *channel)
 bool EPollPoller::RemoveChannel(Channel *channel)
 {
     int fd = channel->GetFd();
-    LOG_DEBUG("fd: [%d]", channel->GetFd());
+    LOG_DEBUG("fd: [%d]", fd);
 
     int events = channel->GetEvents();
     LOG_DEBUG("events: [%s]", Channel::Events2String(events).c_str());
 
-    struct epoll_event epEvent;
+    /* struct epoll_event epEvent;
     epEvent.data.ptr = (void *)channel;
     epEvent.events = events;
 
@@ -124,6 +150,32 @@ bool EPollPoller::RemoveChannel(Channel *channel)
         if (it != _channelMap.end()) {
             _channelMap.erase(it);
         }
+    } */
+
+    if (!Update(EPOLL_CTL_DEL, channel)) {
+        return false;
+    } else {
+        auto it = _channelMap.find(fd);
+        if (it != _channelMap.end()) {
+            _channelMap.erase(it);
+        }
+        channel->SetIndex(kDeleteIndex);
+    }
+
+    return true;
+}
+
+bool EPollPoller::Update(int op, Channel* channel)
+{
+    struct epoll_event epEv;
+    epEv.events = channel->GetEvents();
+    epEv.data.ptr = (void*)channel;
+    int fd = channel->GetFd();
+
+    if (::epoll_ctl(this->_epollFd, op, fd, &epEv) < 0) {
+        perror("epoll_ctl");
+        LOG_ERROR("Update with epoll_ctl failed, op: [%d]", op);
+        return false;
     }
     return true;
 }

@@ -115,7 +115,7 @@ void Channel::DisableWrite()
 void Channel::DisableAll()
 {
     this->_events = kNoneEvent;
-    this->_index = kDeleteIndex;
+    // this->_index = kDeleteIndex; // done this in EpollPoller
     Update();
 }
 
