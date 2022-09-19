@@ -12,6 +12,12 @@
 
 ## 编译指导
 
+* 先需要安装jsoncpp
+```shell
+sudo apt install libjsoncpp-dev
+```
+
+* 开始编译
 ```shell
 git clone ${project_url}
 cd MyReactor
