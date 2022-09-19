@@ -27,10 +27,10 @@ class TcpConnection;
 // TcpConnection
 using TcpConnectionPtr = std::shared_ptr<TcpConnection>;
 
-using TcpConnectionCallback = function<void (const TcpConnectionPtr&)>;
+using ConnectionCallback = function<void (const TcpConnectionPtr&)>;
 using MessageReadCallback = function<void (const TcpConnectionPtr&, ByteBuffer*, Timestamp)>;
 using MessageWriteCompleteCallback = function<void (const TcpConnectionPtr&)>;
-using TcpConnectionCloseCallback = function<void (const TcpConnectionPtr&)>;
+using ConnectionCloseCallback = function<void (const TcpConnectionPtr&)>;
 
 // TcpServer
 using NewConnectionCallback = function<void (int sockFd, INetAddr clientAddr)>;

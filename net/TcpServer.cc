@@ -48,8 +48,8 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
 
     string tcpConnStr = this->_listenAddr.GetAddrAndPort() + "<->" + clientAddr.GetAddrAndPort();
     TcpConnectionPtr con(new TcpConnection(_eventLoop, tcpConnStr, sockFd, clientAddr, _listenAddr));
-    con->SetTcpConnectionCallback(bind(&TcpServer::DefaultTcpConnectionHandler, this, std::placeholders::_1));
-    con->SetTcpConnectionCloseCallback(bind(&TcpServer::RemoveConnection, this, std::placeholders::_1));
+    con->SetConnectionCallback(bind(&TcpServer::DefaultTcpConnectionHandler, this, std::placeholders::_1));
+    con->SetConnectionCloseCallback(bind(&TcpServer::RemoveConnection, this, std::placeholders::_1));
     con->SetMessageReadCallback(_messageReadCallback);
     con->SetMessageWriteCompleteCallback(_messageWriteCompleteCallback);
     _connectionMap[tcpConnStr] = con;

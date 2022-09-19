@@ -28,9 +28,9 @@ public:
     void stop();
 
 public:
-    void setTcpConnectionCallback(const TcpConnectionCallback& cb)
+    void setConnectionCallback(const ConnectionCallback& cb)
     {
-        this->_tcpConnectionCallback = cb;
+        this->_connectionCallback = cb;
     }
     void setMessageReadCallback(const MessageReadCallback& cb)
     {
@@ -41,9 +41,9 @@ public:
         this->_messageWriteCompleteCallback = cb;
     }
 private:
-    void setTcpConnectionCloseCallback(const TcpConnectionCloseCallback& cb)
+    void setConnectionCloseCallback(const ConnectionCloseCallback& cb)
     {
-        this->_tcpConnectionCloseCallback = cb;
+        this->_connectionCloseCallback = cb;
     }
 private:
     void setNewConnectionCallback(const NewConnectionCallback& cb)
@@ -64,10 +64,10 @@ private:
     INetAddr _listenAddr;   // server addr & port to listen
 
     // callbacks for TcpConnection
-    TcpConnectionCallback _tcpConnectionCallback;
+    ConnectionCallback _connectionCallback;
     MessageReadCallback _messageReadCallback;
     MessageWriteCompleteCallback _messageWriteCompleteCallback;
-    TcpConnectionCloseCallback _tcpConnectionCloseCallback;
+    ConnectionCloseCallback _connectionCloseCallback;
 
     // callbacks for Acceptor
     NewConnectionCallback _newConnectionCallback;

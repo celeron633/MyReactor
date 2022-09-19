@@ -235,8 +235,8 @@ void TcpConnection::ConnectionEstablishedInLoop()
     SetState(kConnected);
 
     // run callback
-    if (this->_connectionOKCallback) {
-        _connectionOKCallback(shared_from_this());
+    if (this->_connectionCallback) {
+        _connectionCallback(shared_from_this());
     }
 
     LOG_DEBUG("ConnectionEstablishedInLoop end! TcpConnection object state is [%s]", State2String());

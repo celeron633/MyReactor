@@ -82,9 +82,9 @@ public:
     void ConnectionDestory();
     void ConnectionDestoryInLoop();
 public:
-    void SetTcpConnectionCallback(const TcpConnectionCallback& cb)
+    void SetConnectionCallback(const ConnectionCallback& cb)
     {
-        this->_connectionOKCallback = cb;
+        this->_connectionCallback = cb;
     }
     void SetMessageReadCallback(const MessageReadCallback& cb)
     {
@@ -94,7 +94,7 @@ public:
     {
         this->_messageWriteCompleteCallback = cb;
     }
-    void SetTcpConnectionCloseCallback(const TcpConnectionCloseCallback& cb)
+    void SetConnectionCloseCallback(const ConnectionCloseCallback& cb)
     {
         this->_connectionCloseCallback = cb;
     }
@@ -135,10 +135,10 @@ private:
     base::ByteBuffer _writeBuf;
 
     // callbacks for TcpConnection
-    TcpConnectionCallback _connectionOKCallback;
+    ConnectionCallback _connectionCallback;
     MessageReadCallback _messageReadCallback;
     MessageWriteCompleteCallback _messageWriteCompleteCallback;
-    TcpConnectionCloseCallback _connectionCloseCallback;
+    ConnectionCloseCallback _connectionCloseCallback;
 };
 
 };
