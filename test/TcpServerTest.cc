@@ -25,6 +25,11 @@ void ReadClientData(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp ts)
     LOG_INFO("ReadClientData end");
 }
 
+void NotifyWriteDone(const TcpConnectionPtr& conn)
+{
+    LOG_INFO("conn [%s] write done!", conn->GetConnName().c_str());
+}
+
 int main(int argc, char *argv[])
 {
     cout << "TcpServer start!" << endl;
@@ -34,6 +39,7 @@ int main(int argc, char *argv[])
     TcpServer myServer(&loop, listenAddr, "myServer");
     myServer.start();
     myServer.setMessageReadCallback(bind(ReadClientData, placeholders::_1, placeholders::_2, placeholders::_3));
+    myServer.setMessageWriteCompleteCallback(bind(NotifyWriteDone, std::placeholders::_1));
 
     loop.loop();
 

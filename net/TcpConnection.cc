@@ -103,6 +103,11 @@ void TcpConnection::WriteInLoop(const char* buf, size_t len)
     // make sure this happens in loop thread, not in working thread
     _eventLoop->AssertInEventLoopThread();
 
+    if (this->_status == kDisconnected) {
+        LOG_WARN("call WriteInLoop while TcpConnection is kDisconnected!");
+        return;
+    }
+
     LOG_DEBUG("WriteInLoop begin!");
     // if the channel is not interested in 'Writable', just send to client/server with ::write
     if (!_channel->IsWriteEnabled()) {
@@ -112,7 +117,8 @@ void TcpConnection::WriteInLoop(const char* buf, size_t len)
         if (writeLen == (ssize_t)len) {
             LOG_DEBUG("call ::write() with full-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
             if (this->_messageWriteCompleteCallback) {
-                _messageWriteCompleteCallback(shared_from_this());
+                // _messageWriteCompleteCallback(shared_from_this());
+                _eventLoop->QueueInLoop(std::bind(_messageWriteCompleteCallback, shared_from_this()));
             }
         } else if (writeLen < (ssize_t)len) {
             LOG_DEBUG("call ::write() with part-success, writeLen: [%lu], reqLen: [%ld], remainingLen: [%lu]", writeLen, len, remainingLen);
@@ -137,6 +143,11 @@ void TcpConnection::HandleWrite()
     LOG_INFO("HandleWrite begin");
     // make sure in loop thread
     this->_eventLoop->AssertInEventLoopThread();
+
+    if (this->_status == kDisconnected) {
+        LOG_WARN("call HandleWrite while TcpConnection is kDisconnected!");
+        return;
+    }
 
     if (!_channel->IsWriteEnabled()) {
         LOG_WARN("call HandleWrite while channel is not writeEnabled!");
@@ -167,7 +178,8 @@ void TcpConnection::HandleWrite()
         LOG_DEBUG("::write send all writeBuf data! will DisableWrite!");
         this->_channel->DisableWrite(); // 全部发送完了不再关注写事件
         if (this->_messageWriteCompleteCallback) {
-            this->_messageWriteCompleteCallback(shared_from_this());
+            // this->_messageWriteCompleteCallback(shared_from_this());
+            _eventLoop->QueueInLoop(bind(this->_messageWriteCompleteCallback, shared_from_this()));
         }
     } else if (actualWriteSize < (ssize_t)bufRemainingSize) {    // 写缓存发送出去了部分
         LOG_DEBUG("::write send [%ld] bytes from writeBuf", actualWriteSize);
