@@ -83,7 +83,7 @@ void EventLoop::stop()
 }
 
 // run callback in eventloop
-void EventLoop::RunInLoopThread(Functor func)
+void EventLoop::RunInLoopThread(const Functor& func)
 {
     pid_t currentTid = CurrentThread::GetThreadId();
     
@@ -96,7 +96,7 @@ void EventLoop::RunInLoopThread(Functor func)
     }
 }
 
-void EventLoop::QueueInLoop(Functor func)
+void EventLoop::QueueInLoop(const Functor& func)
 {
     // TODO: make loop return from 'Poll' immediately, we need a eventFd to get this done
 

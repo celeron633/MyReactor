@@ -38,9 +38,9 @@ public:
     // 结束事件循环
     void stop();
     // 在EventLoop中运行
-    void RunInLoopThread(Functor func);
+    void RunInLoopThread(const Functor& func);
     // 加入待执行回调队列
-    void QueueInLoop(Functor func);
+    void QueueInLoop(const Functor& func);
 
     void AssertInEventLoopThread(void);
     bool InEventLoopThread(void);
