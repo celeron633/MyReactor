@@ -306,3 +306,20 @@ const char* TcpConnection::State2String()
         return "Unknown";
     }
 }
+
+void TcpConnection::ShutdownWrite(void)
+{
+    this->_eventLoop->RunInLoopThread(bind(&TcpConnection::ShutdownWriteInLoop, this));
+}
+
+void TcpConnection::ShutdownWriteInLoop()
+{
+    this->_eventLoop->AssertInEventLoopThread();
+
+    LOG_DEBUG("ShutdownWriteInLoop begin");
+    this->_peerSocket.ShutdownWrite();
+    if (this->_status == kConnected) {
+        this->SetState(kDisconnecting);
+    }
+    LOG_DEBUG("ShutdownWriteInLoop end");
+}

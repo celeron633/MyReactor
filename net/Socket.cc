@@ -65,6 +65,17 @@ int Socket::Close()
     return ret;
 }
 
+int Socket::ShutdownWrite()
+{
+    int ret = ::shutdown(this->_sockFd, SHUT_WR);
+    if (ret < 0) {
+        perror("shutdown");
+        LOG_ERROR("ShutdownWrite failed!");
+    }
+
+    return ret;
+}
+
 // public socket related functions
 SOCKET Socket::CreateNonBlockingSocket()
 {

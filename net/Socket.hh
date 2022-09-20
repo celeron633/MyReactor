@@ -40,6 +40,7 @@ public:
     void ReuseAddr();
     int Accept(INetAddr& peerAddr);
     int Close();
+    int ShutdownWrite();
 
     void SetNoDelay();      // TCP no-delay
     void SetReusePort();    // TCP reuse-port

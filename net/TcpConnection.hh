@@ -60,13 +60,13 @@ public:
     }
 
     // 关闭socket写
-    void ShutdownWrite()
+    /* void ShutdownWrite()
     {
         this->_channel->DisableWrite();
         if (::shutdown(this->_sockFd, SHUT_WR) < 0) {
             perror("socket shutdown");
         }
-    }
+    } */
 
     // write data to tcp connection
     void Write(const char* buf, size_t len);
@@ -76,7 +76,11 @@ public:
     void ForceClose();
     void ForceCloseInLoop();
 
-    // for 'TcpServer' & 'TcpClient'
+    // shutdown
+    void ShutdownWrite();
+    void ShutdownWriteInLoop();
+
+    // for 'TcpServer'
     void ConnectionEstablished();
     void ConnectionEstablishedInLoop();
     void ConnectionDestory();
