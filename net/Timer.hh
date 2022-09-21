@@ -15,34 +15,21 @@ namespace net {
 class Timer {
 
 public:
-    Timer(TimerCallback cb, Timestamp when, int interval, int repeatCount = -1);
+    Timer(TimerCallback cb, Timestamp when, unsigned int interval, int repeatCount = -1);
     ~Timer();
 
-    void run();
+    void run(); // run callback
+    void cancel();  // cancel this timer
+    bool canceled();    // if canceled
 
-    void cancel()
-    {
-        this->_canceled = true;
-    }
-    bool canceled()
-    {
-        return _canceled;
-    }
-
-    Timestamp getExpiration(void)
-    {
-        return _expiration;
-    }
-
-    int getRepeatCount()
-    {
-        return _repeatCount;
-    }
+    Timestamp getExpiration(void);
+    int getRepeatCount();
+    int64_t getSequence();
 
 private:
     TimerCallback _callback;
     Timestamp _expiration;
-    int _interval;
+    unsigned int _interval;
     int _repeatCount;
     bool _canceled; // if canceled
 

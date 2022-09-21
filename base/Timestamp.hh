@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <sys/time.h>
+#include <stdint.h>
 
 #include <cstdio>
 #include <iostream>
@@ -15,45 +16,20 @@ namespace base
 
 class Timestamp {
 public:
-    Timestamp()
-    {
-        gettimeofday(&_timeval, NULL);
-    }
+    Timestamp();
+    ~Timestamp();
 
-    void SetToNow()
-    {
-        gettimeofday(&_timeval, NULL);
-    }
+    void SetToNow();
+    string ConvertToString();
+    static string GetCurrentTimestamp();
 
-    string ConvertToString()
-    {
-        string timeStr;
-        char buf[128] = {0};
+    uint64_t GetMilliseconds() const;
+    void AddMilliseconds(uint64_t i);
 
-        gettimeofday(&_timeval, NULL);
-        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S.", localtime(&(_timeval.tv_sec)));
-        timeStr.append(buf);
-        // add ms
-        sprintf(buf, "%ld", _timeval.tv_usec / 1000);
-        timeStr.append(buf);
-
-        return timeStr;
-    }
-
-    static string GetCurrentTimestamp()
-    {
-        string timeStr;
-        char buf[128] = {0};
-        timeval tv;
-
-        gettimeofday(&tv, NULL);
-        strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S.", localtime(&(tv.tv_sec)));
-        timeStr.append(buf);
-        sprintf(buf, "%ld", tv.tv_usec / 1000);
-        timeStr.append(buf);
-
-        return timeStr;
-    }
+    // operators
+    Timestamp& operator+=(int milliseconds);
+    bool operator<(const Timestamp& r);
+    bool operator==(const Timestamp& r);
 private:
     // timeval holder
     timeval _timeval;
