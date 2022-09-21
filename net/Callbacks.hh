@@ -15,7 +15,6 @@ using std::function;
 using base::ByteBuffer;
 
 namespace base {
-
     class ByteBuffer;
     class Timestamp;
 }
@@ -44,7 +43,8 @@ using WriteCallback = function<void ()>;
 using CloseCallback = function<void ()>;
 using ErrorCallback = function<void ()>;
 
-
+// Timer
+using TimerCallback = function<void ()>;
 
 
 }
