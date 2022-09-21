@@ -66,7 +66,7 @@ void Timestamp::AddMilliseconds(uint64_t i)
         _timeval.tv_usec = uSec + _timeval.tv_usec;
     } else {
         this->_timeval.tv_sec += 1;
-        _timeval.tv_usec = (uSec + _timeval.tv_usec) - 1000 * 1000;
+        _timeval.tv_usec = (uSec + _timeval.tv_usec) - (1000 * 1000);
     }
 }
 
