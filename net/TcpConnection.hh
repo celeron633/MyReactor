@@ -30,7 +30,7 @@ using base::Logger;
 
 namespace net {
 
-// enable 'enable_shared_from_this' to get a shared this pointer
+// enable 'enable_shared_from_this' to get a shared 'this' pointer
 class TcpConnection : public enable_shared_from_this<TcpConnection>, public NonCopyable {
 public:
     enum TcpConnState {

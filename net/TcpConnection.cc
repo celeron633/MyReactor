@@ -6,7 +6,8 @@ using namespace std;
 
 TcpConnection::TcpConnection(EventLoop* eventLoop, string name, int sockFd, const INetAddr& peerAddr, const INetAddr& localAddr) \
     : _eventLoop(eventLoop), _sockFd(sockFd), _channel(new Channel(_eventLoop, _sockFd)), _connName(name), \
-    _peerAddr(peerAddr), _localAddr(localAddr), _peerSocket(_sockFd), _status(kConnecting){
+    _peerAddr(peerAddr), _localAddr(localAddr), _peerSocket(_sockFd), _status(kConnecting)
+{
     LOG_INFO("TcpConnection object constructed! connName: [%s], peerFd: [%d]", _connName.c_str(), _sockFd);
     
     // set callbacks for channel for this TcpConnection object
