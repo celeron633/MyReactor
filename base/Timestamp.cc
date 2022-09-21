@@ -80,6 +80,10 @@ bool Timestamp::operator<(const Timestamp& r) {
     return this->GetMilliseconds() < r.GetMilliseconds();
 }
 
+bool Timestamp::operator>=(const Timestamp& r) {
+    return !(this->GetMilliseconds() < r.GetMilliseconds());
+}
+
 bool Timestamp::operator==(const Timestamp& r) {
     return this->GetMilliseconds() == r.GetMilliseconds();
 }

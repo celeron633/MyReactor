@@ -29,6 +29,7 @@ public:
     // operators
     Timestamp& operator+=(int milliseconds);
     bool operator<(const Timestamp& r);
+    bool operator>=(const Timestamp& r);
     bool operator==(const Timestamp& r);
 private:
     // timeval holder
