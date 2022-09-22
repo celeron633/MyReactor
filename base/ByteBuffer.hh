@@ -34,6 +34,8 @@ public:
     char* Begin();
     char* ReadBegin();
     char* WriteBegin();
+
+    char* Peek();
 private:
     vector<char> _buf;
 

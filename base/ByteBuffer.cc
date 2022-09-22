@@ -114,3 +114,8 @@ void ByteBuffer::RetrieveAll(void)
 {
     Retrieve(ReadableBytes());
 }
+
+char* ByteBuffer::Peek()
+{
+    return &(*_buf.begin()) + _readIndex;
+}
