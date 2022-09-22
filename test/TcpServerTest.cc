@@ -1,7 +1,7 @@
 #include "TcpServer.hh"
 #include "EventLoop.hh"
 #include "Log.hh"
-#include "Utils.hh"
+#include "HexUtils.hh"
 
 #include <iostream>
 
@@ -18,7 +18,7 @@ void ReadClientData(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp ts)
     size_t recvBytes = buf->ReadableBytes();
     LOG_INFO("recv bytes: [%lu]", recvBytes);
     memcpy(sendBuf, buf->ReadBegin(), recvBytes);
-    utils::hexdump(sendBuf, recvBytes);
+    util::hexdump(sendBuf, recvBytes);
     buf->RetrieveAll();
 
     conn->Write(sendBuf, recvBytes);

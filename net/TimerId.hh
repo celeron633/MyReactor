@@ -1,10 +1,12 @@
 #ifndef __TIMER_ID_HH__
 #define __TIMER_ID_HH__
 
-#include "Timer.hh"
+// #include "Timer.hh"
 #include "TimerQueue.hh"
 
 namespace net {
+
+class Timer;
 
 // wrapper for 'Timer'
 class TimerId {

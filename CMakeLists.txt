@@ -26,7 +26,10 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
 
 # 'gcc -I' include directories
-include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/base ${PROJECT_SOURCE_DIR}/net ${PROJECT_SOURCE_DIR}/HttpServer)
+include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/base 
+    ${PROJECT_SOURCE_DIR}/net 
+    ${PROJECT_SOURCE_DIR}/util 
+    ${PROJECT_SOURCE_DIR}/HttpServer)
 
 # binary output path
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/bin)
@@ -35,4 +38,5 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/bin)
 add_subdirectory(base)
 add_subdirectory(net)
 add_subdirectory(test)
+add_subdirectory(util)
 add_subdirectory(HttpServer)

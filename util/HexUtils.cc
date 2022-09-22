@@ -1,12 +1,12 @@
-#include "Utils.hh"
+#include "HexUtils.hh"
 
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
-using namespace utils;
+using namespace util;
 
-void utils::hexdump(const char* addr, size_t buflen)
+void util::hexdump(const char* addr, size_t buflen)
 {
     unsigned char* buf = (unsigned char*)addr;
     unsigned int i = 0, j = 0;

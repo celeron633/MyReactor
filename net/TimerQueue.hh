@@ -3,5 +3,14 @@
 
 #include "Timestamp.hh"
 #include "Timer.hh"
+#include "TimerId.hh"
+
+namespace net {
+
+class TimerQueue {
+
+};
+
+}
 
 #endif
