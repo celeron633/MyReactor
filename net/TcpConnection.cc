@@ -15,8 +15,6 @@ TcpConnection::TcpConnection(EventLoop* eventLoop, string name, int sockFd, cons
     _channel->SetWriteCallback(bind(&TcpConnection::HandleWrite, this));
     _channel->SetErrorCallback(bind(&TcpConnection::HandleError, this));
     _channel->SetCloseCallback(bind(&TcpConnection::HandleClose, this));
-
-    
 }
 
 TcpConnection::~TcpConnection()
@@ -68,14 +66,20 @@ void TcpConnection::HandleClose()
 
     LOG_INFO("conn: [%s] HandleRead close begin", _connName.c_str());
     // 1. set status to disconnecting
-    SetState(kDisconnecting);
+    SetState(kDisconnected);
     // 2. unregist channel from reactor
     this->_channel->DisableAll();
     // this->_channel->Remove();
     // 3. close socket
     // this->_peerSocket.Close();   // done by destructor of 'Socket object'
 
-    SetState(kDisconnecting);
+    // let upper class know this connection is going to destory
+    if (_connectionCallback) {
+        TcpConnectionPtr guard(shared_from_this());
+        _connectionCallback(guard);
+    }
+
+    // SetState(kDisconnecting);
     if (_connectionCloseCallback) {
         TcpConnectionPtr guard(shared_from_this()); // hold the object by shared_ptr, we must wait until callback finished
         _connectionCloseCallback(guard);
@@ -264,17 +268,25 @@ void TcpConnection::ConnectionDestoryInLoop()
 {
     this->_eventLoop->AssertInEventLoopThread();
 
-    LOG_DEBUG("ConnectionDestoryInLoop begin!");
+    LOG_DEBUG("ConnectionDestoryInLoop begin! conn status: [%s]", State2String());
 
-    if (this->_status != kConnected && this->_status != kDisconnecting) {
+   /* if (this->_status != kConnected && this->_status != kDisconnecting) {
         LOG_WARN("call ConnectionDestoryInLoop while status is not kConnected or kDisconnecting, status: [%s]", State2String());
         return;
+    } */
+
+    if (this->_status == kConnected) {
+        this->SetState(kDisconnected);
+        TcpConnectionPtr guard(this);
+        if (_connectionCallback) {
+            _connectionCallback(guard);
+        }
     }
 
-    this->_channel->DisableAll();
+    // this->_channel->DisableAll();
     this->_channel->Remove();
 
-    this->SetState(kDisconnected);
+    // this->SetState(kDisconnected);
 
     // run callback
     /* if (this->_connectionCloseCallback) {

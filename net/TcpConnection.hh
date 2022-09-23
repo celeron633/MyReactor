@@ -139,10 +139,10 @@ private:
     base::ByteBuffer _writeBuf;
 
     // callbacks for TcpConnection
-    ConnectionCallback _connectionCallback;
+    ConnectionCallback _connectionCallback; // invoked when connect or disconnect
     MessageReadCallback _messageReadCallback;
     MessageWriteCompleteCallback _messageWriteCompleteCallback;
-    ConnectionCloseCallback _connectionCloseCallback;
+    ConnectionCloseCallback _connectionCloseCallback;   // only invoked by 'TcpServer'
 };
 
 };

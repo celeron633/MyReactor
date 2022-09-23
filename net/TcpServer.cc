@@ -37,7 +37,11 @@ void TcpServer::stop()
 
 void TcpServer::DefaultTcpConnectionHandler(const TcpConnectionPtr& con)
 {
-    LOG_INFO("welcom new client: [%s]", con->GetConnName().c_str());
+    if (con->GetConnStatus() == TcpConnection::kConnecting || con->GetConnStatus() == TcpConnection::kConnected) {
+        LOG_INFO("welcom new client: [%s]", con->GetConnName().c_str());
+    } else if (con->GetConnStatus() == TcpConnection::kDisconnected || con->GetConnStatus() == TcpConnection::kDisconnecting) {
+        LOG_INFO("goodbye client: [%s]", con->GetConnName().c_str());
+    }
 }
 
 // handle incoming tcp client
