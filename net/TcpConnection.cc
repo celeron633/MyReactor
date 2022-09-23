@@ -276,6 +276,7 @@ void TcpConnection::ConnectionDestoryInLoop()
     } */
 
     if (this->_status == kConnected) {
+        this->_channel->DisableAll();
         this->SetState(kDisconnected);
         TcpConnectionPtr guard(this);
         if (_connectionCallback) {
