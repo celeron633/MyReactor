@@ -26,7 +26,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(JSONCPP jsoncpp)
 
 # 'gcc -I' include directories
-include_directories(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/base 
+include_directories(${PROJECT_SOURCE_DIR} 
+    ${PROJECT_SOURCE_DIR}/base 
     ${PROJECT_SOURCE_DIR}/net 
     ${PROJECT_SOURCE_DIR}/util 
     ${PROJECT_SOURCE_DIR}/HttpServer)
