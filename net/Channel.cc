@@ -122,7 +122,7 @@ void Channel::DisableAll()
 void Channel::HandleEvent(Timestamp timestamp)
 {
     LOG_DEBUG("HandleEvent begin");
-    LOG_DEBUG("timestamp: [%s]", timestamp.ConvertToString().c_str());
+    LOG_DEBUG("timestamp: [%s], fd: [%d]", timestamp.ConvertToString().c_str(), this->_fd);
 
     // 连接关闭
     if (_rEvents & EPOLLHUP && !(_rEvents & EPOLLIN)) {
