@@ -6,6 +6,7 @@
 
 namespace net {
 
+using TimerSeqType = int64_t;
 class Timer;
 
 // wrapper for 'Timer'
@@ -30,6 +31,12 @@ public:
     int64_t getSeq()
     {
         return _sequence;
+    }
+
+    void makeInvalid()
+    {
+        this->_sequence = -1;
+        this->_timerPtr = NULL;
     }
 private:
     Timer* _timerPtr;

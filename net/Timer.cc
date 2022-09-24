@@ -50,18 +50,18 @@ void Timer::run()
         return;
     }
 
-    // run callback for Timer
     if (_callback) {
         _callback();
     }
 
     if (this->_repeatCount != -1 && this->_repeatCount > 0) {
         --this->_repeatCount;
-        if (_repeatCount == 0) {
-            cancel();
-        }
+    }
+
+    if (_repeatCount == 0) {
+        cancel();
     }
     
-    this->_expiration += _interval;
+    this->_expiration += _interval; // add Timestamp _expiration to next expire
 }
 

@@ -31,27 +31,27 @@ EPollPoller::~EPollPoller()
 
 void EPollPoller::FillActiveChannels(ChannelList *channelList)
 {
-    LOG_DEBUG("FillActiveChannels begin!");
+    // LOG_DEBUG("FillActiveChannels begin!");
 
     for (int i = 0; i < _eventsNum; ++i) {
         // get 'Channel *' pointer from epoll_data
         Channel *channel = (Channel *)_epEvents[i].data.ptr;
-        LOG_DEBUG("channel addr: %p", channel);
+        // LOG_DEBUG("channel addr: %p", channel);
         channel->SetrEvents(_epEvents[i].events);
 
         channelList->push_back(channel);
     }
-    LOG_DEBUG("FillActiveChannels end");
+    // LOG_DEBUG("FillActiveChannels end");
 }
 
 Timestamp EPollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
 {
-    LOG_DEBUG("Poll begin");
+    // LOG_DEBUG("Poll begin");
 
     // note: this won't change the size() of vector, use the return value to determin how many envets
     _eventsNum = epoll_wait(_epollFd, _epEvents.data(), kEpollSize, timeoutMs);
     Timestamp retStamp;
-    LOG_DEBUG("eventsNum: [%d]", _eventsNum);
+    // LOG_DEBUG("eventsNum: [%d]", _eventsNum);
 
     if (_eventsNum == 0) {
         LOG_DEBUG("Poll timeout");
@@ -66,7 +66,7 @@ Timestamp EPollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
         }
     }
 
-    LOG_DEBUG("Poll end");
+    // LOG_DEBUG("Poll end");
     return retStamp;
 }
 

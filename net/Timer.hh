@@ -4,16 +4,18 @@
 #include "Timestamp.hh"
 #include "Callbacks.hh"
 #include "Log.hh"
+#include "NonCopyable.hh"
 
 #include <stdint.h>
 #include <atomic>
 
 using base::Timestamp;
+using base::NonCopyable;
 
 namespace net {
 
-class Timer {
-
+class Timer : public NonCopyable {
+    friend class TimerQueue;
 public:
     Timer(TimerCallback cb, Timestamp when, unsigned int interval, int repeatCount = -1);
     ~Timer();

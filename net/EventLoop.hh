@@ -5,6 +5,7 @@
 #include "Mutex.hh"
 #include "CurrentThread.hh"
 #include "Channel.hh"
+#include "TimerQueue.hh"
 
 #include <functional>
 #include <vector>
@@ -51,6 +52,13 @@ private:
     void HandleReadEventFd();
     void WakeUp();
 
+public:
+    // Timer related stuff
+    TimerId runAt(const TimerCallback& cb, Timestamp when);
+    TimerId runEvery(const TimerCallback& cb, Timestamp when, int intervalMs);
+    // trun off timers
+    void deleteAllTimers(void);
+
 private:
     Poller *_poller;    // multiplexer
     vector<Functor> _pendingFunctors;   // pending jobs to run in eventloop thread
@@ -71,6 +79,9 @@ private:
 private:
     int _eventFd;
     Channel _eventFdChannel;
+
+private:
+    TimerQueue _timerQueue;
 };
 
 };

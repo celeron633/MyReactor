@@ -20,7 +20,8 @@ using namespace net;
 const int kPollTimeoutMs = 3 * 1000;
 
 EventLoop::EventLoop() : _looping(false), _quit(false), \
-    _tid(CurrentThread::GetThreadId()), _eventFd(CreateEventFd()), _eventFdChannel(this, _eventFd)
+    _tid(CurrentThread::GetThreadId()), _eventFd(CreateEventFd()), _eventFdChannel(this, _eventFd), \
+    _timerQueue(this)
 {
     LOG_INFO("EventLoop object constructed, tid:[%d]", this->_tid);
     _poller = new EPollPoller(this);
@@ -51,9 +52,8 @@ void EventLoop::loop()
         // 1. handle poller event
         _activeChannels.clear();
         Timestamp pollRetTime = _poller->Poll(kPollTimeoutMs, &_activeChannels);
-        LOG_INFO("pollRetTime: [%s]", pollRetTime.ConvertToString().c_str());
-
-        LOG_DEBUG("activeChannels' count: [%lu]", _activeChannels.size());
+        LOG_DEBUG("pollRetTime: [%s], activeChannels' count: [%lu]", pollRetTime.ConvertToString().c_str(), _activeChannels.size());
+        // LOG_DEBUG("activeChannels' count: [%lu]", _activeChannels.size());
         // 1. handle returned event
         for (ChannelList::iterator it = _activeChannels.begin(); it != _activeChannels.end(); ++it) {
             (*it)->HandleEvent(pollRetTime);
@@ -70,7 +70,7 @@ void EventLoop::loop()
         _mutex.Unlock();
 
         // 3. handle cron(timer) job
-        // TODO: servCron
+        this->_timerQueue.runTimers();
     }
     
     LOG_INFO("loop end");
@@ -165,4 +165,20 @@ void EventLoop::WakeUp()
         perror("write");
         LOG_WARN("WakeUp failed!");
     }
+}
+
+// timer related
+TimerId EventLoop::runAt(const TimerCallback& cb, Timestamp when)
+{
+    return this->_timerQueue.addTimer(cb, when, 0, 0);
+}
+
+TimerId EventLoop::runEvery(const TimerCallback& cb, Timestamp when, int intervalMs)
+{
+    return this->_timerQueue.addTimer(cb, when, intervalMs, -1);
+}
+
+void EventLoop::deleteAllTimers(void)
+{
+    this->_timerQueue.deleteAllTimers();
 }

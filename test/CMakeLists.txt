@@ -7,3 +7,6 @@ target_link_libraries(TcpServerTest net::library base::library util::library)
 
 add_executable(TimestampTest TimestampTest.cc)
 target_link_libraries(TimestampTest base::library)
+
+add_executable(TimerQueueTest TimerQueueTest.cc)
+target_link_libraries(TimerQueueTest base::library net::library)
