@@ -33,7 +33,7 @@ make
 
  - [x] 实现TimerQueue
 
- - [ ] 实现TcpClient类 
+ - [x] 实现TcpClient类 
 
  - [x] 优化Log打印功能
 
