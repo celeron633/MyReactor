@@ -15,7 +15,9 @@ enum TraceLevels {
     TRACE,
     WARN,
     ERROR,
-    FATAL
+    SYSE,
+    FATAL,
+    CRITICAL
 };
 
 namespace base {
@@ -27,8 +29,10 @@ public:
         return &logger;
     }
 public:
-    void Append(string str);
-    void Append(string str, const char *func, int lineNo);
+    // void Append(string str);
+    // void Append(string str, const char *func, int lineNo);
+    void Append(int level, const char* file, const char* func, int line, const char* fmt, ...);
+    void MakeHeader(string& str, int level, const char* file, const char* func, int line);
     void SetLogLevel(int logLevel);
     int GetLogLevel();
     void SetFilterLevel(int level);
@@ -46,59 +50,44 @@ private:
 
 }
 
-#define LOG_DEBUG(fmt, ...)                         \
-do {                                                \
-    char buf[2048] = {0};                           \
-    sprintf(buf, fmt, ##__VA_ARGS__);               \
-    base::Logger *logger = Logger::GetInstance();   \
-    logger->SetLogLevel(TraceLevels::DEBUG);        \
-    logger->Append(buf, __FUNCTION__, __LINE__);    \
+#define LOG_DEBUG(fmt, ...)                                                                                 \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(DEBUG, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);       \
 } while (0)
 
-#define LOG_INFO(fmt, ...)                          \
-do {                                                \
-    char buf[2048] = {0};                           \
-    sprintf(buf, fmt, ##__VA_ARGS__);               \
-    base::Logger *logger = Logger::GetInstance();   \
-    logger->SetLogLevel(TraceLevels::INFO);         \
-    logger->Append(buf, __FUNCTION__, __LINE__);    \
+#define LOG_INFO(fmt, ...)                                                                                  \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(INFO, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);        \
 } while (0)
 
-#define LOG_TRACE(fmt, ...)                         \
-do {                                                \
-    char buf[2048] = {0};                           \
-    sprintf(buf, fmt, ##__VA_ARGS__);               \
-    base::Logger *logger = Logger::GetInstance();   \
-    logger->SetLogLevel(TraceLevels::TRACE);        \
-    logger->Append(buf, __FUNCTION__, __LINE__);    \
+#define LOG_TRACE(fmt, ...)                                                                                 \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(TRACE, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);       \
 } while (0)
 
-#define LOG_WARN(fmt, ...)                          \
-do {                                                \
-    char buf[2048] = {0};                           \
-    sprintf(buf, fmt, ##__VA_ARGS__);               \
-    base::Logger *logger = Logger::GetInstance();   \
-    logger->SetLogLevel(TraceLevels::WARN);         \
-    logger->Append(buf, __FUNCTION__, __LINE__);    \
+#define LOG_WARN(fmt, ...)                                                                                  \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(WARN, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);        \
 } while (0)
 
-#define LOG_ERROR(fmt, ...)                         \
-do {                                                \
-    char buf[2048] = {0};                           \
-    sprintf(buf, fmt, ##__VA_ARGS__);               \
-    base::Logger *logger = Logger::GetInstance();   \
-    logger->SetLogLevel(TraceLevels::ERROR);        \
-    logger->Append(buf, __FUNCTION__, __LINE__);    \
+#define LOG_ERROR(fmt, ...)                                                                                 \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(ERROR, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);       \
 } while (0)
 
-#define LOG_FATAL(fmt, ...)                         \
-do {                                                \
-    char buf[2048] = {0};                           \
-    sprintf(buf, fmt, ##__VA_ARGS__);               \
-    base::Logger *logger = Logger::GetInstance();   \
-    logger->SetLogLevel(TraceLevels::FATAL);        \
-    logger->Append(buf, __FUNCTION__, __LINE__);    \
-    logger->Crash();                                \
+#define LOG_SYSE(fmt, ...)                                                                                  \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(SYSE, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);        \
+} while (0)
+
+#define LOG_FATAL(fmt, ...)                                                                                 \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(FATAL, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);       \
+} while (0)
+
+#define LOG_CRITICAL(fmt, ...)                                                                              \
+do {                                                                                                        \
+    base::Logger::GetInstance()->Append(CRITICAL, __FILE__, __FUNCTION__, __LINE__, fmt, ##__VA_ARGS__);    \
 } while (0)
 
 #endif
