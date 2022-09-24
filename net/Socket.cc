@@ -130,3 +130,35 @@ void Socket::SetSocketReuseAddr(SOCKET fd, bool on)
     #endif
         // FIXME CHECK
 }
+
+sockaddr Socket::GetLocalSockaddr(SOCKET sockfd)
+{
+    sockaddr addr;
+    socklen_t addrLen;
+
+    bzero(&addr, sizeof(addr));
+    addrLen = sizeof(addr);
+
+    if (::getsockname(sockfd, &addr, &addrLen) < 0) {
+        perror("getsockname");
+        LOG_ERROR("GetLocalSockaddr failed");
+    }
+
+    return addr;
+}
+
+sockaddr Socket::GetRemoteSockaddr(SOCKET sockfd)
+{
+    sockaddr addr;
+    socklen_t addrLen;
+
+    bzero(&addr, sizeof(addr));
+    addrLen = sizeof(addr);
+
+    if (::getpeername(sockfd, &addr, &addrLen) < 0) {
+        perror("getpeername");
+        LOG_ERROR("GetRemoteSockaddr failed");
+    }
+
+    return addr;
+}

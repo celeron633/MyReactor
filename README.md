@@ -37,9 +37,9 @@ make
 
  - [x] 优化Log打印功能
 
- - [ ] 实现一个异步日志类
+ - [ ] 实现一个异步日志类 ASyncLog
 
- - [ ] 实现基于Poll的多路复用器 
+ - [ ] 实现基于Poll的多路复用器 PollPoller
 
  - [ ] 实现多EventLoop 
 
