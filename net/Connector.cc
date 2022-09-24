@@ -86,6 +86,7 @@ void Connector::connecting(int sockFd)
     // create a cheannl and regist to reactor
     this->_connectorChannel.reset(new Channel(this->_loop, sockFd));
     this->_connectorChannel->SetWriteCallback(bind(&Connector::socketIsReadyToWrite, this, sockFd));
+    this->_connectorChannel->SetErrorCallback(bind(_failedCallback));
     this->_connectorChannel->EnableWrite(); // regist write event to reactor
 }
 
