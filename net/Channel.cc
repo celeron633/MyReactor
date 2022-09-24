@@ -4,6 +4,8 @@
 
 #include "Common.hh"
 
+#include <poll.h>
+
 using namespace base;
 using namespace net;
 using namespace std;
@@ -132,14 +134,14 @@ void Channel::HandleEvent(Timestamp timestamp)
         }
     }
     // 错误
-    if (_rEvents & EPOLLERR) {
+    if (_rEvents & (EPOLLERR | POLLNVAL)) {
         LOG_INFO("error event");
         if (_errorCallback) {
             _errorCallback();
         }
     }
     // 读取
-    if (_rEvents & (EPOLLIN | EPOLLPRI)) {
+    if (_rEvents & (EPOLLIN | EPOLLPRI | POLLRDHUP)) {
         LOG_INFO("read event");
         if (_readCallback) {
             _readCallback(timestamp);
