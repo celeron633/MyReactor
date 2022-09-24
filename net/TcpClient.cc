@@ -64,6 +64,9 @@ void TcpClient::handleConnectSuccess(int sockFd)
     _tcpConnectionPtr->SetMessageWriteCompleteCallback(_messageWriteCompleteCallback);
     _tcpConnectionPtr->SetConnectionCloseCallback(_connectionCloseCallback);
 
+    // regist read event for TcpConnection
+    this->_eventLoop->RunInLoopThread(bind(&TcpConnection::ConnectionEstablished, _tcpConnectionPtr.get()));
+
     LOG_DEBUG("handleConnectSuccess end");
 }
 
