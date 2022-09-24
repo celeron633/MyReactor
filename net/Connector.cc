@@ -45,12 +45,12 @@ void Connector::connect()
     int sockFd = 0;
 
     sockFd = Socket::CreateNonBlockingSocket();
-    LOG_DEBUG("sockFd: %d", sockFd);
+    LOG_DEBUG("connector sockFd: %d", sockFd);
 
     sockaddr addr = *(sockaddr*)this->_serverAddr.GetSockAddr();
     socklen_t addrLen = sizeof(addr);
     ret = ::connect(sockFd, &addr, addrLen);    // call ::connect
-    LOG_DEBUG("connect() ret: %d", ret);
+    LOG_DEBUG("::connect() ret: %d", ret);
 
     int saveErrno = ret < 0 ? errno : 0;
     // printf("%d", errno);
@@ -92,9 +92,11 @@ void Connector::connecting(int sockFd)
 void Connector::socketIsReadyToWrite(int sockFd)
 {
     setStatus(CONNECTED);
+    // remove channel after connected, avoid busy loop
     this->_connectorChannel->DisableAll();
     this->removeChannel();
 
+    // call callback when connectedToServer
     if (_connectedToServerCallback) {
         _connectedToServerCallback(sockFd);
     }
