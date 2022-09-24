@@ -13,7 +13,7 @@ const int Channel::kReadEvent = EPOLLIN | EPOLLPRI;
 const int Channel::kWriteEvent = EPOLLOUT;
 const int Channel::kNoneEvent = 0;
 
-Channel::Channel(EventLoop* loop, int fd) : _loop(loop), _fd(fd), _index(kInitialIndex), _events(0), _rEvents(0)
+Channel::Channel(EventLoop* loop, int fd) : _loop(loop), _fd(fd), _index(kInitialIndex), _events(0), _rEvents(0), _isWriteEnabled(false)
 {
     LOG_INFO("Channel construct");
 
