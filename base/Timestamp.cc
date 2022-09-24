@@ -29,7 +29,7 @@ string Timestamp::ConvertToString()
     strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S.", localtime(&(_timeval.tv_sec)));
     timeStr.append(buf);
     // add ms
-    sprintf(buf, "%ld", _timeval.tv_usec / 1000);
+    sprintf(buf, "%03ld", _timeval.tv_usec / 1000);
     timeStr.append(buf);
 
     return timeStr;
@@ -44,7 +44,7 @@ string Timestamp::GetCurrentTimestamp()
     gettimeofday(&tv, NULL);
     strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S.", localtime(&(tv.tv_sec)));
     timeStr.append(buf);
-    sprintf(buf, "%ld", tv.tv_usec / 1000);
+    sprintf(buf, "%03ld", tv.tv_usec / 1000);
     timeStr.append(buf);
 
     return timeStr;
