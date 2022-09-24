@@ -28,7 +28,7 @@ void Connector::defaultConnectedToServerCallback(int sockFd)
 
 void Connector::start()
 {
-    this->_loop->RunInLoopThread(bind(&Connector::startInLoop, this));
+    this->_loop->QueueInLoop(bind(&Connector::startInLoop, this));
 }
 
 void Connector::startInLoop()
@@ -52,7 +52,10 @@ void Connector::connect()
     ret = ::connect(sockFd, &addr, addrLen);    // call ::connect
     LOG_DEBUG("connect() ret: %d", ret);
 
-    switch (ret) {
+    int saveErrno = ret < 0 ? errno : 0;
+    // printf("%d", errno);
+
+    switch (saveErrno) {
         // this cases are okay, when the sockFd is ready to write, we connected to server successfully
         case 0:
         case EINPROGRESS:

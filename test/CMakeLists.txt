@@ -13,3 +13,6 @@ target_link_libraries(TimerQueueTest base::library net::library)
 
 add_executable(LogTest LogTest.cc)
 target_link_libraries(LogTest base::library net::library)
+
+add_executable(TcpClientTest TcpClientTest.cc)
+target_link_libraries(TcpClientTest net::library base::library util::library)
