@@ -27,11 +27,13 @@ void ParseHeader(string& header)
     }
 }
 
-string MakeResponseHeader()
+string MakeResponseHeader(int contentLength)
 {
     std::stringstream sstream;
     sstream << "HTTP/1.1 200\r\n" \
             << "content-type: application/json; charset=utf-8\r\n" \
+            << "Content-Length: " << contentLength << "\r\n" \
+            << "Connection: keep-alive\r\n" \
             << "server: cloudflare\r\n" \
             << "pragma: no-cache\r\n" \
             << "\r\n";
@@ -41,9 +43,12 @@ string MakeResponseHeader()
 string MakeResponseBody()
 {
     std::stringstream sstream;
+    Timestamp now;
+
     sstream << "{\r\n" \
-        << "    status: OK\r\n" \
-        << "}\r\n";
+            << "\tstatus: OK\r\n" \
+            << "\ttime: " << now.ConvertToString().c_str() << "\r\n"
+            << "}\r\n";
     return sstream.str();
 }
 
@@ -52,7 +57,9 @@ void ReadReqAndSendResp(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp
     // LOG_INFO("ReadReqAndSendResp begin! conn: [%s], time: [%s]", conn->GetConnName().c_str(), ts.ConvertToString().c_str());
 
     string req;
-    string resp;
+
+    string respHeader;
+    string respBody;
 
     size_t recvBytes = buf->ReadableBytes();
     LOG_INFO("recv bytes: [%lu]", recvBytes);
@@ -62,10 +69,12 @@ void ReadReqAndSendResp(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp
     printf("%s", req.c_str());
 
     ParseHeader(req);
-    resp = MakeResponseHeader();
-    resp.append(MakeResponseBody());
-    conn->Write(resp);
-    conn->ForceClose();
+
+    respBody = MakeResponseBody();
+    respHeader = MakeResponseHeader(respBody.length());
+    conn->Write(respHeader);
+    conn->Write(respBody);
+    // conn->ForceClose();
 
     // buf->RetrieveAll();
 
