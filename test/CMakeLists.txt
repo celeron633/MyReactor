@@ -16,3 +16,9 @@ target_link_libraries(LogTest base::library net::library)
 
 add_executable(TcpClientTest TcpClientTest.cc)
 target_link_libraries(TcpClientTest net::library base::library util::library)
+
+add_executable(HttpServerTest HttpServerTest.cc)
+target_link_libraries(HttpServerTest net::library base::library util::library)
+
+add_executable(UtilTest UtilTest.cc)
+target_link_libraries(UtilTest net::library base::library util::library)
