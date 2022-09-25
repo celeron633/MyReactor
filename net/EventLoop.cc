@@ -24,7 +24,7 @@ EventLoop::EventLoop() : _looping(false), _quit(false), \
     _timerQueue(this)
 {
     LOG_INFO("EventLoop object constructed, tid:[%d]", this->_tid);
-    _poller = new EPollPoller(this);
+    _poller = new EPollPoller(this);    // use EPollPoller as default
 
     _eventFdChannel.SetReadCallback(bind(&EventLoop::HandleReadEventFd, this));
     _eventFdChannel.EnableRead();
