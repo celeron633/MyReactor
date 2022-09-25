@@ -16,7 +16,7 @@ set(CMAKE_BUILD_TYPE debug)
 
 # CXX flags
 set(CMAKE_CXX_FLAGS
-    " -std=c++11 -g -O0 -Wall -Wextra -Wno-unused-parameter -Werror")
+    " -std=c++11 -g -O0 -Wall -Wextra -Wno-unused-parameter -Werror -Wno-unused-variable")
 
 # multi thread support
 find_package(Threads REQUIRED)
