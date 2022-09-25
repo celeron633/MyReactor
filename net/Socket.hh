@@ -50,6 +50,7 @@ public:
     static SOCKET CreateNonBlockingSocket();
     static void SetSocketNonBlocking(SOCKET fd);
     static void SetSocketReuseAddr(SOCKET fd, bool on = true);
+    static void SetSocketReusePort(SOCKET fd, bool on = true);
     static sockaddr GetLocalSockaddr(SOCKET sockfd);
     static sockaddr GetRemoteSockaddr(SOCKET sockfd);
     static int GetSocketError(int sockfd);
