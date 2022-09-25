@@ -23,6 +23,8 @@ void ParseHeader(string& header)
     printf("headers:\n");
 
     for (auto& it : strVec) {
+        /* string headerField = it;
+        util::trimCRLF(headerField); */
         cout << it << endl;
     }
 }
@@ -68,6 +70,7 @@ void ReadReqAndSendResp(const TcpConnectionPtr& conn, ByteBuffer* buf, Timestamp
     printf("req:\n");
     printf("%s", req.c_str());
 
+    util::hexdump(req.data(), req.length());
     ParseHeader(req);
 
     respBody = MakeResponseBody();

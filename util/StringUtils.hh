@@ -10,6 +10,7 @@ using std::string;
 
 namespace util {
     void splitString(string src, vector<string>& strVec, string delimiter = "|");
+    void trimCRLF(string& str);
 }
 
 #endif
