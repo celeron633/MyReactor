@@ -162,3 +162,17 @@ sockaddr Socket::GetRemoteSockaddr(SOCKET sockfd)
 
     return addr;
 }
+
+int Socket::GetSocketError(int sockfd)
+{
+    int optVal = 0;
+    socklen_t optLen = 0;
+    optLen = sizeof(optVal);
+
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) < 0) {
+        perror("getsockopt");
+        return errno;
+    }
+    
+    return optVal;
+}

@@ -90,6 +90,9 @@ void TcpConnection::HandleClose()
 void TcpConnection::HandleError()
 {
     LOG_WARN("channel called HandleError!");
+
+    LOG_ERROR("conn: [%s] error: [%s]", this->_connName.c_str(), strerror(Socket::GetSocketError(this->_sockFd)));
+
     HandleClose();
 }
 
