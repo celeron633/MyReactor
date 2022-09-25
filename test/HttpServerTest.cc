@@ -25,6 +25,16 @@ void ParseHeader(string& header)
     for (auto& it : strVec) {
         /* string headerField = it;
         util::trimCRLF(headerField); */
+
+        if (it.find("GET") != it.npos || it.find("POST") != it.npos) {
+            vector<string> strVec2;
+            util::splitString(it, strVec2, " ");
+            
+            printf("HTTP Method: [%s]\n", strVec2[0].c_str());
+            printf("URL Path: [%s]\n", strVec2[1].c_str());
+            printf("HTTP Version: [%s]\n", strVec2[2].c_str());
+        }
+
         cout << it << endl;
     }
 }
