@@ -22,8 +22,7 @@ set(CMAKE_CXX_FLAGS
 find_package(Threads REQUIRED)
 
 # json support
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(JSONCPP jsoncpp)
+find_library(JSONCPP_LIB jsoncpp /usr/lib /usr/lib/x86_64-linux-gnu/ /usr/local/lib NO_DEFAULT_PATH)
 
 # 'gcc -I' include directories
 include_directories(${PROJECT_SOURCE_DIR} 
