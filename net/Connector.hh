@@ -27,7 +27,7 @@ public:
 
     void start();
     int getStatus();
-    void setConnectedToServerCallback(const ConnectedToServerCallback& cb);
+    void setConnectToServerSuccessCallback(const ConnectToServerSuccessCallback& cb);
     void setConnectToServerFailedCallback(const ConnectToServerFailedCallback& cb);
 private:
     void startInLoop();
@@ -38,7 +38,7 @@ private:
 
     void socketIsReadyToWrite(int sockFd);
 
-    void defaultConnectedToServerCallback(int sockFd);
+    void defaultConnectToServerSuccessCallback(int sockFd);
 private:
     void removeChannel();
 private:
@@ -48,7 +48,7 @@ private:
     std::atomic_int _status;
 
     unique_ptr<Channel> _connectorChannel;
-    ConnectedToServerCallback _connectedToServerCallback;
+    ConnectToServerSuccessCallback _successCallback;
     ConnectToServerFailedCallback _failedCallback;
 };
 

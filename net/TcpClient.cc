@@ -10,7 +10,7 @@ TcpClient::TcpClient(EventLoop* loop, INetAddr serverAddr) :
 {
     LOG_DEBUG("TcpClient object constructed! serverAddr: %s", this->_serverAddr.GetAddrAndPort().c_str());
     // set callbacks to Connector object
-    this->_connector.setConnectedToServerCallback(bind(&TcpClient::handleConnectSuccess, this, std::placeholders::_1));
+    this->_connector.setConnectToServerSuccessCallback(bind(&TcpClient::handleConnectSuccess, this, std::placeholders::_1));
     this->_connector.setConnectToServerFailedCallback(bind(&TcpClient::handleConnectError, this));
 }
 
@@ -24,7 +24,7 @@ void TcpClient::connect()
     this->_connector.start();
 }
 
-// void TcpClient::setConnectedToServerCallback(const ConnectedToServerCallback& cb)
+// void TcpClient::setConnectToServerSuccessCallback(const ConnectToServerSuccessCallback& cb)
 // {
 //     this->_successCallback = cb;
 // }

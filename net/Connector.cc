@@ -12,7 +12,7 @@ Connector::Connector(EventLoop *loop, INetAddr serverAddr) : _loop(loop), _serve
     _connectorChannel.reset(NULL);
     LOG_INFO("Connector object constructed! serverAddr: [%s]", this->_serverAddr.GetAddrAndPort().c_str());
     // set a default callback for connected
-    this->_connectedToServerCallback = bind(&Connector::defaultConnectedToServerCallback, this, std::placeholders::_1);
+    this->_successCallback = bind(&Connector::defaultConnectToServerSuccessCallback, this, std::placeholders::_1);
 }
 
 Connector::~Connector()
@@ -20,7 +20,7 @@ Connector::~Connector()
     LOG_INFO("Connector object destructed!");
 }
 
-void Connector::defaultConnectedToServerCallback(int sockFd)
+void Connector::defaultConnectToServerSuccessCallback(int sockFd)
 {
     LOG_INFO("sock: [%d] connected to server [%s]!", sockFd, this->_serverAddr.GetAddrAndPort().c_str());
 }
@@ -98,8 +98,8 @@ void Connector::socketIsReadyToWrite(int sockFd)
     this->removeChannel();
 
     // call callback when connectedToServer
-    if (_connectedToServerCallback) {
-        _connectedToServerCallback(sockFd);
+    if (_successCallback) {
+        _successCallback(sockFd);
     }
 }
 
@@ -127,9 +127,9 @@ void Connector::removeChannel()
     this->_connectorChannel.reset();
 }
 
-void Connector::setConnectedToServerCallback(const ConnectedToServerCallback& cb)
+void Connector::setConnectToServerSuccessCallback(const ConnectToServerSuccessCallback& cb)
 {
-    this->_connectedToServerCallback = cb;
+    this->_successCallback = cb;
 }
 
 void Connector::setConnectToServerFailedCallback(const ConnectToServerFailedCallback& cb)

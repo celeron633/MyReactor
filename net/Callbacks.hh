@@ -35,7 +35,7 @@ using ConnectionCloseCallback = function<void (const TcpConnectionPtr&)>;
 using NewConnectionCallback = function<void (int sockFd, INetAddr clientAddr)>;
 
 // Connector
-using ConnectedToServerCallback = function<void (int sockFd)>;
+using ConnectToServerSuccessCallback = function<void (int sockFd)>;
 using ConnectToServerFailedCallback = function<void ()>;
 
 // TcpClient

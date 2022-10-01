@@ -22,7 +22,7 @@ public:
     ~TcpClient();
 
     void connect();
-    // void setConnectedToServerCallback(const ConnectedToServerCallback& cb);
+    // void setConnectToServerSuccessCallback(const ConnectToServerSuccessCallback& cb);
     // void setConnectToServerFailedCallback(const ConnectToServerFailedCallback& cb);
     void removeConnection(const TcpConnectionPtr& con);
 
@@ -44,8 +44,8 @@ private:
     unique_ptr<Channel> _channel;
 
     // for Connector
-    ConnectedToServerCallback _successCallback;
-    ConnectToServerFailedCallback _failedCallback;
+    // ConnectToServerSuccessCallback _successCallback;
+    // ConnectToServerFailedCallback _failedCallback;
 
     // callbacks for TcpConnection
     ConnectionCallback _connectionCallback;
