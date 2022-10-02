@@ -8,6 +8,9 @@
 
 namespace net {
 
+using FdsVec = std::vector<struct pollfd>;
+using FdChannelPtrMap = std::map<int, Channel*>;
+
 class PollPoller : public Poller {
 public:
     PollPoller(EventLoop *loop);
@@ -17,11 +20,14 @@ public:
     virtual Timestamp Poll(int timeoutMs, ChannelList *activeChannels);
     virtual bool UpdateChannel(Channel *channel);
     virtual bool RemoveChannel(Channel *channel);
+
+    static void ShowPollFd(const struct pollfd* pfd);
 private:
     void FillActiveChannels(ChannelList *channelList);
 private:
     int _eventsNum;
-    pollfd fds[POLL_SIZE];
+    FdsVec _fds;
+    FdChannelPtrMap _fdChannelPtrMap;
 };
 
 };
