@@ -16,10 +16,10 @@ PollPoller::~PollPoller()
 
 Timestamp PollPoller::Poll(int timeoutMs, ChannelList *activeChannels)
 {
-    LOG_DEBUG("Poll begin");
+    LOG_DEBUG("Poll begin, _fds size: [%d]", this->_fds.size());
     int pollRet = 0;
 
-    pollRet = poll(this->_fds.data(), this->_eventsNum, timeoutMs);
+    pollRet = poll(this->_fds.data(), this->_fds.size(), timeoutMs);
     LOG_DEBUG("pollRet = %d", pollRet);
     if (pollRet < 0) {
         LOG_SYSE("poll return negative!");
