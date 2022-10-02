@@ -3,6 +3,7 @@
 #include "EventLoop.hh"
 #include "Poller.hh"
 #include "EPollPoller.hh"
+#include "PollPoller.hh"
 #include "Channel.hh"
 #include "Log.hh"
 
@@ -24,7 +25,11 @@ EventLoop::EventLoop() : _looping(false), _quit(false), \
     _timerQueue(this)
 {
     LOG_INFO("EventLoop object constructed, tid:[%d]", this->_tid);
+#ifdef MY_REACTOR_USE_EPOLL
     _poller = new EPollPoller(this);    // use EPollPoller as default
+#else
+    _poller = new PollPoller(this);    // use PollPoller
+#endif
 
     _eventFdChannel.SetReadCallback(bind(&EventLoop::HandleReadEventFd, this));
     _eventFdChannel.EnableRead();

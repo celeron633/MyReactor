@@ -10,10 +10,16 @@ using namespace base;
 using namespace net;
 using namespace std;
 
+#ifdef MY_REACTOR_USE_EPOLL
 // event attribute for epoll
 const int Channel::kReadEvent = EPOLLIN | EPOLLPRI;
 const int Channel::kWriteEvent = EPOLLOUT;
 const int Channel::kNoneEvent = 0;
+#else
+const int Channel::kReadEvent = POLLIN | POLLPRI;
+const int Channel::kWriteEvent = POLLOUT;
+const int Channel::kNoneEvent = 0;
+#endif
 
 Channel::Channel(EventLoop* loop, int fd) : _loop(loop), _fd(fd), _index(kInitialIndex), _events(0), _rEvents(0), _isWriteEnabled(false)
 {
