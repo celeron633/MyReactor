@@ -18,6 +18,9 @@ set(CMAKE_BUILD_TYPE debug)
 set(CMAKE_CXX_FLAGS
     " -std=c++11 -g -O0 -Wall -Wextra -Wno-unused-parameter -Werror -Wno-unused-variable")
 
+# use epoll as default
+add_definitions(-DMY_REACTOR_USE_EPOLL)
+
 # multi thread support
 find_package(Threads REQUIRED)
 
