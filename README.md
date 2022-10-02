@@ -39,7 +39,7 @@ make
 
  - [ ] 实现一个异步日志类 ASyncLog
 
- - [ ] 实现基于Poll的多路复用器 PollPoller
+ - [x] 实现基于Poll的多路复用器 PollPoller
 
  - [ ] 实现多EventLoop 
 
