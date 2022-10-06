@@ -16,7 +16,7 @@ set(CMAKE_BUILD_TYPE debug)
 
 # CXX flags
 set(CMAKE_CXX_FLAGS
-    " -std=c++11 -g -O0 -Wall -Wextra -Wno-unused-parameter -Werror -Wno-unused-variable")
+    "-std=c++11 -g -O0 -Wall -Wextra -Wno-unused-parameter -Werror -Wno-unused-variable")
 
 # use epoll as default
 add_definitions(-DMY_REACTOR_USE_EPOLL)
