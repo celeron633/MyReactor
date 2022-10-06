@@ -73,9 +73,9 @@ void TcpConnection::HandleClose()
     // 3. close socket
     // this->_peerSocket.Close();   // done by destructor of 'Socket object'
 
-    // let upper class know this connection is going to destory
+    // let upper class know this connection is going to destory (by get the 'status' is kDisconnected)
     if (_connectionCallback) {
-        TcpConnectionPtr guard(shared_from_this());
+        TcpConnectionPtr guard(shared_from_this()); // guard TcpConnectionPtr
         _connectionCallback(guard);
     }
 
