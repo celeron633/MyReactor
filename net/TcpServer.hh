@@ -9,6 +9,8 @@
 #include "Acceptor.hh"
 #include "NonCopyable.hh"
 
+#include "EventLoopThread.hh"
+
 #include <string>
 #include <map>
 
@@ -80,6 +82,9 @@ private:
 
     // connections
     ConnectionMap _connectionMap;
+
+    // io loop thread
+    EventLoopThread _ioLoopThread;
 };
 
 }

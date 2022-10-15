@@ -8,11 +8,13 @@ TcpServer::TcpServer(EventLoop* loop, INetAddr listenAddr, string serverName) : 
     _acceptor(_eventLoop, _listenAddr)
 {
     LOG_INFO("TcpServer: [%s] constructed!", this->_serverName.c_str());
+    _ioLoopThread.start();
 }
 
 TcpServer::~TcpServer()
 {
     LOG_INFO("TcpServer: [%s] destructed!", this->_serverName.c_str());
+    _ioLoopThread.stop();
 }
 
 void TcpServer::start()
@@ -47,20 +49,23 @@ void TcpServer::DefaultTcpConnectionHandler(const TcpConnectionPtr& con)
 // handle incoming tcp client
 void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
 {
+    // acceptor thread
     this->_eventLoop->AssertInEventLoopThread();
+
+    EventLoop* ioLoop = this->_ioLoopThread.getLoop();
     LOG_INFO("HandleNewConnection begin! sockFd: [%d], client info: [%s]", sockFd, clientAddr.GetAddrAndPort().c_str());
 
     string tcpConnStr = this->_listenAddr.GetAddrAndPort() + "<->" + clientAddr.GetAddrAndPort();
-    TcpConnectionPtr con(new TcpConnection(_eventLoop, tcpConnStr, sockFd, clientAddr, _listenAddr));
+    TcpConnectionPtr con(new TcpConnection(ioLoop, tcpConnStr, sockFd, clientAddr, _listenAddr));
     con->SetConnectionCallback(bind(&TcpServer::DefaultTcpConnectionHandler, this, std::placeholders::_1));
     con->SetConnectionCloseCallback(bind(&TcpServer::RemoveConnection, this, std::placeholders::_1));
     con->SetMessageReadCallback(_messageReadCallback);
     con->SetMessageWriteCompleteCallback(_messageWriteCompleteCallback);
     _connectionMap[tcpConnStr] = con;
     /* this->_connectionMap.insert(std::pair<string, TcpConnectionPtr>(tcpConnStr, \
-        make_shared<TcpConnection>(TcpConnection(_eventLoop, tcpConnStr, sockFd, clientAddr, _listenAddr)))); */
+        make_shared<TcpConnection>(TcpConnection(ioLoop, tcpConnStr, sockFd, clientAddr, _listenAddr)))); */
 
-    _eventLoop->RunInLoopThread(bind(&TcpConnection::ConnectionEstablished, con));
+    ioLoop->RunInLoopThread(bind(&TcpConnection::ConnectionEstablished, con));
 
     LOG_INFO("HandleNewConnection end");
     return;
@@ -69,12 +74,16 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
 // handle connection close
 void TcpServer::RemoveConnection(const TcpConnectionPtr& con)
 {
-    this->_eventLoop->RunInLoopThread(bind(&TcpServer::RemoveConnectionInLoop, this, con));
+    // this function call is from ioLoop
+    EventLoop* ioLoop = con->GetEventLoop();
+    ioLoop->RunInLoopThread(bind(&TcpServer::RemoveConnectionInLoop, this, con));
 }
 
 void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
 {
-    this->_eventLoop->AssertInEventLoopThread();  // make sure this happens in loop thread
+    // make sure this run in ioLoop
+    EventLoop* ioLoop = con->GetEventLoop();
+    ioLoop->AssertInEventLoopThread();  // make sure this happens in loop thread
 
     LOG_DEBUG("RemoveConnectionInLoop begin! conn: [%s]", con->GetConnName().c_str());
 
@@ -86,6 +95,6 @@ void TcpServer::RemoveConnectionInLoop(const TcpConnectionPtr& con)
         return;
     }
 
-    this->_eventLoop->RunInLoopThread(bind(&TcpConnection::ConnectionDestory, con));
+    ioLoop->RunInLoopThread(bind(&TcpConnection::ConnectionDestory, con));
     LOG_DEBUG("RemoveConnectionInLoop end");
 }
