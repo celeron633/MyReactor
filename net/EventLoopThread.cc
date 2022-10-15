@@ -16,6 +16,9 @@ void* EventLoopThread::loopThreadRoutine(void* args)
     obj->_loop = loop;
     obj->_started = true;
 
+    // broadcast thread is ready
+    obj->_loopReadyCond.Broadcast();
+
     // infinite loop here 
     loop->loop();
 
@@ -47,6 +50,11 @@ void EventLoopThread::start()
         return;
     }
 
+    // block here until thread is fully created
+    while (_loop == NULL) {
+        _loopReadyCond.Wait();
+    }
+
 #ifdef __linux__ // linux use unsigned long int for pthread_t, other plat. may not
     LOG_INFO("EventLoopThread object start OK! pthread_t: [0x%lx]", _thread);
 #else
@@ -71,11 +79,10 @@ void EventLoopThread::stop()
 
 void EventLoopThread::join()
 {
-    // do not check
-    /* if (this->_loop == NULL) {
+    if (this->_loop == NULL) {
         LOG_WARN("call EventLoopThread::join() while _loop is NULL");
         return;
-    } */
+    }
 
     pthread_join(this->_thread, NULL);
 }
