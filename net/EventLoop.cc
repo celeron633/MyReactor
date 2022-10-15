@@ -66,13 +66,16 @@ void EventLoop::loop()
 
         // 2. handle pending functors
         _mutex.Lock();
-        if (!_pendingFunctors.empty()) {
-            for (auto it = _pendingFunctors.begin(); it != _pendingFunctors.end(); ) {
+        vector<Functor> tmpPendingFunctors;
+        tmpPendingFunctors.swap(this->_pendingFunctors);
+        _mutex.Unlock();
+
+        if (!tmpPendingFunctors.empty()) {
+            for (auto it = tmpPendingFunctors.begin(); it != tmpPendingFunctors.end(); ) {
                 (*(it))();  // call functor
-                it = _pendingFunctors.erase(it);    // then remove it from task queue
+                it = tmpPendingFunctors.erase(it);    // then remove it from task queue
             }
         }
-        _mutex.Unlock();
 
         // 3. handle cron(timer) job
         this->_timerQueue.runTimers();
