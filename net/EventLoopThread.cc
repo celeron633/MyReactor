@@ -14,6 +14,7 @@ void* EventLoopThread::loopThreadRoutine(void* args)
     EventLoopThread* obj = (EventLoopThread*)args;
     EventLoop* loop = new EventLoop();
     obj->_loop = loop;
+    obj->_started = true;
 
     // infinite loop here 
     loop->loop();
@@ -21,7 +22,7 @@ void* EventLoopThread::loopThreadRoutine(void* args)
     return NULL;
 }
 
-EventLoopThread::EventLoopThread() : _loop(NULL)
+EventLoopThread::EventLoopThread() : _loop(NULL), _started(false)
 {
     // reset class member
     bzero(&_thread, sizeof(_thread));
@@ -29,14 +30,21 @@ EventLoopThread::EventLoopThread() : _loop(NULL)
 
 EventLoopThread::~EventLoopThread()
 {
-    stop();
+    if (_started) {
+        stop();
+    }
 }
 
 void EventLoopThread::start()
 {
+    if (_started) {
+        return;
+    }
+
     if (pthread_create(&this->_thread, NULL, &EventLoopThread::loopThreadRoutine, (void*)this) != 0) { // pass this pointer to static function
         LOG_ERROR("pthread_create failed!");
         perror("pthread_create");
+        return;
     }
 
 #ifdef __linux__ // linux use unsigned long int for pthread_t, other plat. may not
@@ -44,6 +52,8 @@ void EventLoopThread::start()
 #else
     LOG_INFO("EventLoopThread object start OK!");
 #endif
+
+    // _started = true;
 }
 
 void EventLoopThread::stop()
@@ -55,10 +65,22 @@ void EventLoopThread::stop()
     // set stop flag
     _loop->stop();
 
-    // TODO: wait thread to die
+    // wait thread to die
+    this->join();
 }
 
 void EventLoopThread::join()
 {
+    // do not check
+    /* if (this->_loop == NULL) {
+        LOG_WARN("call EventLoopThread::join() while _loop is NULL");
+        return;
+    } */
+
     pthread_join(this->_thread, NULL);
+}
+
+EventLoop* EventLoopThread::getLoop()
+{
+    return _loop;
 }

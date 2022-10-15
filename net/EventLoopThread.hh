@@ -9,7 +9,7 @@
 
 using net::EventLoop;
 
-class EventLoopThread {
+class EventLoopThread : base::NonCopyable {
 public:
     EventLoopThread();
     ~EventLoopThread();
@@ -19,9 +19,11 @@ public:
     void join();
 
     static void* loopThreadRoutine(void* args);
+    EventLoop* getLoop();
 private:
     EventLoop* _loop;
     pthread_t _thread;
+    bool _started;
 };
 
 #endif
