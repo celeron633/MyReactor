@@ -41,7 +41,7 @@ make
 
  - [x] 实现基于Poll的多路复用器 PollPoller
 
- - [ ] 实现多EventLoop 
+ - [x] 实现多EventLoop 
 
  - [ ] 实现一个简易的http服务器 
 
