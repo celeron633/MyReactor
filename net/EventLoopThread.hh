@@ -11,6 +11,8 @@
 using net::EventLoop;
 using base::Condition;
 
+namespace net {
+
 class EventLoopThread : base::NonCopyable {
 public:
     EventLoopThread();
@@ -29,6 +31,8 @@ private:
 
     // Mutex _mutex;
     Condition _loopReadyCond;
+};
+
 };
 
 #endif
