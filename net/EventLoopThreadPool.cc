@@ -26,7 +26,9 @@ void EventLoopThreadPool::start()
 {
     for (auto i = 0; i < kLoopThreadPoolSize; ++i) {
         _loops[i]->start(); // block call until thread is ready
-    } 
+    }
+
+    LOG_INFO("EventLoopThreadPool::start() OK");
 }
 
 /*
