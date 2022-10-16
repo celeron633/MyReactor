@@ -7,7 +7,7 @@
 ## 开发环境
 
 * linux kernel version 4.15.0 (ubuntu 20.04 desktop)
-* gcc version 7.5.0
+* gcc version 7.5.0 (cxx11 support required)
 * cmake version 3.10.2
 
 ## 编译指导
