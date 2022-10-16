@@ -4,7 +4,7 @@ project(MyReactor)
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     message("building with Linux!")
 else()
-    message( FATAL_ERROR "Only support Linux!" )
+    message(FATAL_ERROR "Only support Linux!")
 endif()
 
 # CXX 11
