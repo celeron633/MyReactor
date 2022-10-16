@@ -1,6 +1,8 @@
 #include "EventLoopThreadPool.hh"
 #include "Log.hh"
 
+#include <limits.h>
+
 using namespace net;
 using namespace base;
 using namespace std;
@@ -45,4 +47,9 @@ EventLoopThread* EventLoopThreadPool::getNextLoop()
     auto idx = _curIndex % kLoopThreadPoolSize;
     return _loops[idx]; // get different loop each time
     ++_curIndex;
+
+    // prevent int overflow
+    if (_curIndex == INT32_MAX) {
+        _curIndex = 0;
+    }
 }
