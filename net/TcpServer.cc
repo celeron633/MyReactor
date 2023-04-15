@@ -52,6 +52,7 @@ void TcpServer::HandleNewConnection(int sockFd, INetAddr clientAddr)
     // acceptor thread
     this->_eventLoop->AssertInEventLoopThread();
 
+    // use another thread for client i/o loop
     EventLoop* ioLoop = this->_ioLoopThread.getLoop();
     LOG_INFO("HandleNewConnection begin! sockFd: [%d], client info: [%s]", sockFd, clientAddr.GetAddrAndPort().c_str());
 
